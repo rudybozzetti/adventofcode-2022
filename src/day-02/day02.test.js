@@ -9,7 +9,7 @@ describe('day02', () => {
 
     expect(result).toBe(15)
 
-    console.log('### result', result)
+
   })
 
   it('getStratScore should return expected result', () => {
@@ -18,7 +18,7 @@ describe('day02', () => {
 
     expect(result).toBe(12)
 
-    console.log('### result', result)
+
   })
 
 

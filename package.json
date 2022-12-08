@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest src/ ",
+    "test": "jest --coverage src/ ",
     "day-01": "babel-node src/day-01/index.js",
-    "day-02": "babel-node src/day-02/index.js"
+    "day-02": "babel-node src/day-02/index.js",
+    "day-03": "babel-node src/day-03/index.js"
   },
   "author": "",
   "license": "ISC",
