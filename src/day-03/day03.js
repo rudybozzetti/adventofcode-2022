@@ -29,3 +29,34 @@ export const getPrioritySum = (data) => {
   }, 0)
 
 }
+
+export const variadicIntersect = (...arrays) => {
+  const [firstSet, ...otherSets] = arrays.map(a => new Set(a))
+
+  return [...firstSet].filter(x => otherSets.every(set => set.has(x)))
+}
+
+export const variadicStringIntersection = (...strings) => {
+  const arrays = strings.map(s => s.split(''))
+  return variadicIntersect(...arrays).join('')
+}
+
+export const getCommonBadgesSum = data => {
+  const { score } = data.split(/\n/).reduce(({ tmp, score }, line, index) => {
+    if (index % 3 === 2) {
+      const match = variadicStringIntersection(...tmp, line)
+      const priority = getTypePriority(match)
+
+      return { tmp: [], score: score + priority }
+    }
+    else {
+      return {
+        tmp: [...tmp, line],
+        score
+      }
+    }
+
+  }, { tmp: [], score: 0 })
+
+  return score
+}

@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path')
 
-import { getPrioritySum } from './day03'
+import { getPrioritySum, getCommonBadgesSum } from './day03'
 
 export const day03 = (inputFile) => {
   try {
@@ -11,6 +11,10 @@ export const day03 = (inputFile) => {
     const sum = getPrioritySum(data)
 
     console.log('### sum', sum)
+
+    const commonBadgesSum = getCommonBadgesSum(data)
+
+    console.log('### commonBadgesSum', commonBadgesSum)
   } catch (err) {
     console.error(err);
   }
