@@ -101,4 +101,40 @@ export const part1 = input => {
 
 }
 
-export const part2 = input => {}
+export const flattenPairs = pairs => pairs.reduce((acc, [left, right]) => [...acc, left, right],[])
+
+export const sortPackets = (pairs) => {
+  const sorted = pairs.sort((left, right) => {
+    const result = compareLists(left, right)
+    return result === OK ? -1 : result === KO ? 1:NEUTRAL
+  } )
+
+  return sorted
+}
+
+export const dividers = [
+  [[2]],
+  [[6]]
+]
+
+
+export const part2 = (input, _dividers) => {
+  const pairs = buildPairs(input)
+  const flattened = flattenPairs(pairs)
+
+  const tmp = [
+    ...flattened,
+    ..._dividers
+  ]
+  
+  const sorted = sortPackets(tmp)
+
+
+  const result = sorted.reduce((acc, packet, index) => {
+    return dividers.includes(packet) ? acc * (index+1):acc
+
+  },1)
+
+  return result
+  
+}

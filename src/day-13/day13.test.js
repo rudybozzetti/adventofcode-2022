@@ -1,4 +1,4 @@
-import {buildPairs, OK,KO,NEUTRAL, isNumber, compareValues, compareLists, part1} from './day13'
+import {buildPairs, OK,KO,NEUTRAL, isNumber, compareValues, compareLists, part1, sortPackets, part2, dividers} from './day13'
 
 const testInput = `[1,1,3,1,1]
 [1,1,5,1,1]
@@ -100,6 +100,14 @@ describe('day13', () => {
 
   it('part1', () => {
     expect(part1(testInput)).toBe(13)
+  })
+
+  it('sortPackets', ( )=> {
+    expect(sortPackets([[],[1,2]])).toStrictEqual([[],[1,2]])
+  })
+
+  it('part2', () => {
+    expect(part2(testInput, dividers)).toBe(140)
   })
 
 
