@@ -16,7 +16,8 @@
     "day-09": "babel-node src/day-09/index.js",
     "day-10": "babel-node src/day-10/index.js",
     "day-11": "babel-node src/day-11/index.js",
-    "day-12": "babel-node src/day-12/index.js"
+    "day-12": "babel-node src/day-12/index.js",
+    "day-13": "babel-node src/day-13/index.js"
   },
   "author": "",
   "license": "ISC",
