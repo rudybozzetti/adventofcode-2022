@@ -1,6 +1,6 @@
 
 
-import { parseInput, findMaxDist, findMinMaxX, findPositions, part1 } from './day15'
+import { parseInput, findMaxDist, findMinMaxX, findPositions, part1, findBeacon, getOuterLines, part2 } from './day15'
 
 const testInput = `Sensor at x=2, y=18: closest beacon is at x=-2, y=15
 Sensor at x=9, y=16: closest beacon is at x=10, y=16
@@ -18,20 +18,20 @@ Sensor at x=14, y=3: closest beacon is at x=15, y=3
 Sensor at x=20, y=1: closest beacon is at x=15, y=3`
 
 export const testMap = [
-  { S: '2,18', B: '-2,15', dist: 7 },
-  { S: '9,16', B: '10,16', dist: 1 },
-  { S: '13,2', B: '15,3', dist: 3 },
-  { S: '12,14', B: '10,16', dist: 4 },
-  { S: '10,20', B: '10,16', dist: 4 },
-  { S: '14,17', B: '10,16', dist: 5 },
-  { S: '8,7', B: '2,10', dist: 9 },
-  { S: '2,0', B: '2,10', dist: 10 },
-  { S: '0,11', B: '2,10', dist: 3 },
-  { S: '20,14', B: '25,17', dist: 8 },
-  { S: '17,20', B: '21,22', dist: 6 },
-  { S: '16,7', B: '15,3', dist: 5 },
-  { S: '14,3', B: '15,3', dist: 1 },
-  { S: '20,1', B: '15,3', dist: 7 },
+  { S: { x: 2, y: 18 }, B: { x: -2, y: 15 }, dist: 7 },
+  { S: { x: 9, y: 16 }, B: { x: 10, y: 16 }, dist: 1 },
+  { S: { x: 13, y: 2 }, B: { x: 15, y: 3 }, dist: 3 },
+  { S: { x: 12, y: 14 }, B: { x: 10, y: 16 }, dist: 4 },
+  { S: { x: 10, y: 20 }, B: { x: 10, y: 16 }, dist: 4 },
+  { S: { x: 14, y: 17 }, B: { x: 10, y: 16 }, dist: 5 },
+  { S: { x: 8, y: 7 }, B: { x: 2, y: 10 }, dist: 9 },
+  { S: { x: 2, y: 0 }, B: { x: 2, y: 10 }, dist: 10 },
+  { S: { x: 0, y: 11 }, B: { x: 2, y: 10 }, dist: 3 },
+  { S: { x: 20, y: 14 }, B: { x: 25, y: 17 }, dist: 8 },
+  { S: { x: 17, y: 20 }, B: { x: 21, y: 22 }, dist: 6 },
+  { S: { x: 16, y: 7 }, B: { x: 15, y: 3 }, dist: 5 },
+  { S: { x: 14, y: 3 }, B: { x: 15, y: 3 }, dist: 1 },
+  { S: { x: 20, y: 1 }, B: { x: 15, y: 3 }, dist: 7 },
 
 
 
@@ -53,7 +53,7 @@ describe('day15', () => {
 
   it('parseInput', () => {
     expect(parseInput('Sensor at x=2, y=18: closest beacon is at x=-2, y=15')).toStrictEqual(
-      [{ S: '2,18', B: '-2,15', dist: 7 }]
+      [{ S: { x: 2, y: 18 }, B: { x: -2, y: 15 }, dist: 7 }]
     )
 
     expect(parseInput(testInput)).toStrictEqual(
@@ -77,5 +77,19 @@ describe('day15', () => {
     expect(part1(testInput, 10)).toBe(26)
   })
 
+  it('findBeacon', () => {
+    expect(findBeacon(testMap, 0, 0, 20, 20)).toStrictEqual({ x: 14, y: 11 })
+  })
+
+  it.only('getOuterLines', () => {
+    expect(getOuterLines({
+      S: { x: 2, y: 2 },
+      dist: 1
+    })).toStrictEqual([-2, 2, 2, 6])
+  })
+
+  it('part2', () => {
+    expect(part2(testInput, 0, 0, 20, 20)).toBe(56000011)
+  })
 
 })

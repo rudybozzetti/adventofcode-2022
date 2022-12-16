@@ -12,7 +12,7 @@ export const day15 = (inputFile) => {
 
     console.log('### part1Result', part1Result)
 
-    const part2Result = part2(data)
+    const part2Result = part2(data, 0, 0, 4000000, 4000000)
 
     console.log('### part2Result', part2Result)
   } catch (err) {

@@ -12,8 +12,8 @@ export const parseInput = input => {
     return [
       ...acc,
       {
-        S: `${Sx},${Sy}`,
-        B: `${Bx},${By}`,
+        S: { x: parseInt(Sx), y: parseInt(Sy) },
+        B: { x: parseInt(Bx), y: parseInt(By) },
         dist
       }
     ]
@@ -29,16 +29,13 @@ export const findMaxDist = map => {
 
 export const findMinMaxX = map => {
   return map.reduce(([prevMin, prevMax], { S, B }) => {
-    const Sx = S.split(',').map(x => parseInt(x))[0]
-    const Bx = B.split(',').map(x => parseInt(x))[0]
-    return [Math.min(prevMin, Sx, Bx), Math.max(prevMax, Sx, Bx)]
+    return [Math.min(prevMin, S.x, B.x), Math.max(prevMax, S.x, B.x)]
   }, [0, 0])
 }
 
-export const calcDist = ([ax, ay], [bx, by]) => Math.abs(ax - bx) + Math.abs(ay - by)
+export const calcDist = (a, b) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y)
 
 export const findBeaconsPositition = map => {
-
   return map.map(({ B }) => B)
 }
 
@@ -46,8 +43,6 @@ export const findPositions = (map, y) => {
   const maxDist = findMaxDist(map)
   const [minX, maxX] = findMinMaxX(map)
   const beacons = findBeaconsPositition(map)
-
-  console.log('### beacons', beacons)
   //
 
   const matches = new Set()
@@ -57,15 +52,14 @@ export const findPositions = (map, y) => {
     const coords = `${x},${y}`
 
     //
-    if (beacons.includes(coords)) {
+    if (beacons.find(b => b.x === x && b.y === y)) {
       continue;
     }
 
     //
 
     const match = map.some(({ S, B, dist }) => {
-      const [Sx, Sy] = S.split(',').map(x => parseInt(x))
-      const pointToSensorDist = calcDist([Sx, Sy], [x, y])
+      const pointToSensorDist = calcDist(S, { x, y })
       //console.log('### pointToSensorDist', pointToSensorDist)
 
       return pointToSensorDist <= dist
@@ -86,9 +80,158 @@ export const findPositions = (map, y) => {
 
 export const part1 = (input, y) => {
   const map = parseInput(input)
-  console.log('### map', map)
+
   const matches = findPositions(map, y)
   //
 
   return matches.length
 }
+
+export const findBeacon = (map, xmin, ymin, xmax, ymax) => {
+
+  const beacons = findBeaconsPositition(map)
+
+  for (let x = xmin; x <= xmax; x++) {
+    for (let y = ymin; y <= ymax; y++) {
+      //
+
+      if (beacons.find(b => b.x === x && b.y === y)) {
+        continue;
+      }
+
+      const match = !map.some(({ S, dist }) => {
+        const _dist = calcDist({ x, y }, S)
+        //  console.log('### dist', _dist)
+
+        return _dist <= dist
+      })
+
+      if (match) {
+        console.log('### x', x, 'y', y, 'match', match)
+
+        return { x, y }
+      }
+
+
+      /*
+      if (x === 14 && y === 11) {
+        console.log('### x 14 y 11 m', m)
+      }
+      */
+
+      /*
+      if (m) {
+        console.log('### m', m, x, y)
+      }
+      */
+
+
+      //
+    }
+  }
+
+}
+
+export const sensorsDiamonds = map => {
+
+
+}
+
+/**
+ * bordy esterni sono 4 rette
+ * y = mx + q dove m è +-1
+ * x = S.x - dist -1
+ * x = S.x + dist + 1
+ * trovo q con le combinazioni di m=1, m=-1
+ */
+export const getOuterLines = ({ S, dist }) => {
+  const q1 = S.y - S.x + dist + 1
+  const q2 = S.y - S.x - dist - 1
+  const q3 = S.y + S.x + dist + 1
+  const q4 = S.y + S.x - dist - 1
+  //
+  return [q1, q2, q3, q4].sort((a, b) => a - b)
+
+
+}
+
+export const part2 = (input, xmin, ymin, xmax, ymax) => {
+  const map = parseInput(input)
+
+  //  const { x, y } = findBeacon(map, xmin, ymin, xmax, ymax)
+
+  //  return x * 4000000 + y
+
+  const sensorsWidthOuterLines = map.map(o => {
+    console.log('### o', o)
+
+    return {
+      ...o,
+      outer: getOuterLines(o)
+    }
+  })
+
+  console.log('### sensorsWidthOuterLines', sensorsWidthOuterLines)
+
+
+
+
+}
+
+
+/*
+for (let y = ymin; y <= ymax; y++) {
+
+
+    console.log('### y', y)
+
+
+    const sensorsCanIntersectY = map.filter(({ S, dist }) => {
+      return S.y - dist <= y && y <= S.y + dist
+    })
+
+    //  console.log('### sensorsCanIntersectY', y, sensorsCanIntersectY)
+
+    if (!sensorsCanIntersectY.length) {
+      continue
+    }
+
+    //
+
+    const xIntervals = sensorsCanIntersectY.reduce((acc, { S, dist }) => {
+      const startX = Math.max(xmin, S.x - dist + Math.abs(S.y - y))
+      const endX = Math.min(xmax, S.x + dist - Math.abs(S.y - y))
+
+
+      for (let x = startX; x <= endX; x++) {
+        acc.add(x)
+      }
+
+      return acc
+
+
+    }, new Set())
+
+    if (xIntervals.size < (xmax - xmin + 1)) {
+      //  hole
+      console.log('### xIntervals hole', xIntervals)
+      for (let x = xmin; x <= xmax; x++) {
+        if (!xIntervals.has(x)) {
+          console.log('### hhoho', x)
+
+
+          return x * 4000000 + y
+        }
+      }
+
+
+    }
+
+
+
+
+    // console.log('### xIntervals', y, '#', xIntervals)
+
+  }
+
+*/
