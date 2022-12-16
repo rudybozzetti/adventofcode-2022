@@ -81,11 +81,11 @@ describe('day15', () => {
     expect(findBeacon(testMap, 0, 0, 20, 20)).toStrictEqual({ x: 14, y: 11 })
   })
 
-  it.only('getOuterLines', () => {
+  it('getOuterLines', () => {
     expect(getOuterLines({
       S: { x: 2, y: 2 },
       dist: 1
-    })).toStrictEqual([-2, 2, 2, 6])
+    })).toStrictEqual([2, -2, 2, 6])
   })
 
   it('part2', () => {

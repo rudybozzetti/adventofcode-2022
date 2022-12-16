@@ -107,7 +107,7 @@ export const findBeacon = (map, xmin, ymin, xmax, ymax) => {
       })
 
       if (match) {
-        console.log('### x', x, 'y', y, 'match', match)
+        
 
         return { x, y }
       }
@@ -140,17 +140,19 @@ export const sensorsDiamonds = map => {
 /**
  * bordy esterni sono 4 rette
  * y = mx + q dove m è +-1
- * x = S.x - dist -1
- * x = S.x + dist + 1
- * trovo q con le combinazioni di m=1, m=-1
+ * quindi y = x + q oppure y = -x + q
+ * punti noti sono (Sx - dist -1, Sy) e (Sx + dist +1, Sy)
+ * //
+ * le prime due q sono con m=1
+ * le ultime due con m=-1
  */
 export const getOuterLines = ({ S, dist }) => {
-  const q1 = S.y - S.x + dist + 1
+  const q1 = S.y - S.x + dist +1
   const q2 = S.y - S.x - dist - 1
-  const q3 = S.y + S.x + dist + 1
-  const q4 = S.y + S.x - dist - 1
+  const q3 = S.y + S.x - dist -1
+  const q4 = S.y + S.x + dist + 1
   //
-  return [q1, q2, q3, q4].sort((a, b) => a - b)
+  return [q1, q2, q3, q4]
 
 
 }
@@ -162,19 +164,61 @@ export const part2 = (input, xmin, ymin, xmax, ymax) => {
 
   //  return x * 4000000 + y
 
-  const sensorsWidthOuterLines = map.map(o => {
-    console.log('### o', o)
+  const sensorsWidthOuterLines = map.map(o => ({
+    ...o,
+    outer: getOuterLines(o),
 
-    return {
-      ...o,
-      outer: getOuterLines(o)
+  }))
+
+  //  console.log('### sensorsWidthOuterLines', sensorsWidthOuterLines)
+
+  const [uplines, downlines] = sensorsWidthOuterLines.reduce((acc, {outer}) => {
+    return [
+      [...acc[0], outer[0], outer[1]],
+      [...acc[1], outer[2], outer[3]],      
+    ]
+
+  }, [[],[]])
+
+  //  console.log('### downlines',downlines)
+  //  console.log('### uplines',uplines)
+
+  //  trovo intersezioni
+  // y = x + q per le upwards
+  // y = -x + q per le downwards
+  // y = x + u = -x + d
+  // x = (d - u)/2
+  for(const d of downlines) {
+    for(const u of uplines) {
+      const x = (d - u) / 2
+
+      if(!Number.isInteger(x)) {
+        continue
+      }
+      
+      const y = x + u
+
+      if(x < xmin || x > xmax || y < ymin || y > ymax) {
+        continue
+      }
+
+      const pointInSensor = map.find(({S, dist}) => {
+        return calcDist(S, {x,y}) <= dist
+      })
+
+      if(!pointInSensor) {
+        //  gotcha!
+        return x * 4000000 + y
+      }
+
+
     }
-  })
+  }
 
-  console.log('### sensorsWidthOuterLines', sensorsWidthOuterLines)
+ 
 
 
-
+  
 
 }
 
