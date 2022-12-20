@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path')
+
 import floydWarshall from "../helpers/floyd-warshall"
 
 export const buildGraph = input => {
@@ -105,41 +108,49 @@ export const part2 = input => {
   const maxscores = new Map()
 
   for (const solution of solutions) {
-    const key = Object.keys(solution).sort((a, b) => a - b)
+    
+    const key = Object.keys(solution).sort((a, b) => a > b ? 1: a<b ? -1:0).join(',')
 
     if (!maxscores.has(key)) {
       maxscores.set(key, getSolutionScore(solution, rates))
     } else {
       const score = getSolutionScore(solution, rates)
       if (score > maxscores.get(key)) {
+      
         maxscores.set(key, score)
       }
     }
 
   }
 
-  //  console.log('### maxscores', Object.keys(maxscores).length)
+  console.log('### maxscores',maxscores)
 
-
-
-
-
-  const combinedScores = []
+  let maxScore = 0
 
   let i = 0;
-  for (const [s1] of maxscores) {
-    for (const [s2] of maxscores) {
-      if (s1.length + s2.length === optimizedValves.length) {
+  for (const [_s1] of maxscores) {
+    const s1 = _s1.split(',')
+
+    for (const [_s2] of maxscores) {
+      const s2 = _s2.split(',')
+
+      //if (s1.length + s2.length >= optimizedValves.length - 2) {
         const intersection = arrayIntersect(s1, s2)
         if (intersection.length === 0) {
-          combinedScores.push(maxscores.get(s1) + maxscores.get(s2))
+          const tryscore = maxscores.get(_s1) + maxscores.get(_s2)
+          if(tryscore > maxScore) {
+            maxScore = tryscore
+            console.log('### new max score', maxScore, '# s1', _s1, '# s2',_s2, "# score1",maxscores.get(_s1),'# score2', maxscores.get(_s2))
+
+
+          }
         }
-      }
+      //}
     }
 
     i++
 
-    if (i % 100 === 0) {
+    if (i % 1000 === 0) {
       console.log('### s1 done', i, 'of', maxscores.size, '(', Math.round(100 * i / maxscores.size), '%)')
     }
 
@@ -149,7 +160,6 @@ export const part2 = input => {
 
   //  console.log('### combinedScores', combinedScores)
 
-  const sorted = combinedScores.sort((a, b) => b - a)
 
 
 
@@ -157,6 +167,8 @@ export const part2 = input => {
 
   //  const scores = solutions.map(s => getSolutionScore(s, rates)).sort((a, b) => b - a)
 
-  return sorted[0]
+  console.log('### result', maxScore)
+
+  return maxScore
 
 } 
