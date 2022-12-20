@@ -1,5 +1,5 @@
 
-import { buildGraph, getSolutionScore ,getOptimizedValves, getSolutions, part1} from './day16'
+import { buildGraph, getSolutionScore, getOptimizedValves, getSolutions, part1, part2, arrayIntersect } from './day16'
 
 const testInput = `Valve AA has flow rate=0; tunnels lead to valves DD, II, BB
 Valve BB has flow rate=13; tunnels lead to valves CC, AA
@@ -54,12 +54,12 @@ const testDistances = {
 }
 
 const testValves = [
-    'BB',
-    'CC',
-    'DD',
-    'EE',
-    'HH',
-    'JJ',
+  'BB',
+  'CC',
+  'DD',
+  'EE',
+  'HH',
+  'JJ',
 ]
 
 describe('buildGraph', () => {
@@ -95,16 +95,28 @@ describe('buildGraph', () => {
   })
 
   it('getSolutions', () => {
-    const d = {AA:{AA:0,BB:1,CC:2, DD: 1}, BB:{AA:1,BB:0,CC:1,DD:2} , CC: {AA:2,BB:1,CC:0,DD:1}, DD: {AA:1,BB:2,CC:1,DD:0}}
+    const d = { AA: { AA: 0, BB: 1, CC: 2, DD: 1 }, BB: { AA: 1, BB: 0, CC: 1, DD: 2 }, CC: { AA: 2, BB: 1, CC: 0, DD: 1 }, DD: { AA: 1, BB: 2, CC: 1, DD: 0 } }
 
-    const rates = {AA:0,BB:13, CC:2,DD:20}
-    const valves = ['BB','CC', 'DD']
+    const rates = { AA: 0, BB: 13, CC: 2, DD: 20 }
+    const valves = ['BB', 'CC', 'DD']
 
-    const s = getSolutions(d,rates,valves,30,'AA',[] )
+    const s = getSolutions(d, rates, valves, 30, 'AA', [])
 
   })
 
   it('part1', () => {
     expect(part1(testInput)).toBe(1651)
+  })
+
+  it('part2', () => {
+    expect(part2(testInput)).toBe(1707)
+  })
+
+  it('arrayIntersect', () => {
+    expect(arrayIntersect([], [])).toStrictEqual([])
+    expect(arrayIntersect(['a'], ['b'])).toStrictEqual([])
+    expect(arrayIntersect(['a', 'b', 'c'], ['z', 'b', 'z'])).toStrictEqual(['b'])
+
+
   })
 })
