@@ -37,11 +37,11 @@ const SHAPES = [
 
 export const SCREEN_WIDTH = 7
 
-export const prepareScreen = (prevScreen = [], ymax, shapeIndex, shapePosition) => {
+export const prepareScreen = (prevScreen = [], shapeIndex, shapePosition) => {
   const shape = SHAPES[shapeIndex]
 
-  if (ymax < shapePosition.y + shape.length) {
-    const h = shapePosition.y + shape.length - ymax - shape.length
+  if (prevScreen.length < shapePosition.y + shape.length) {
+    const h = shapePosition.y + shape.length - prevScreen.length 
     console.log('### append ', h, 'lines')
     //
     const newLines = [...Array(h)].map(_ => Array(SCREEN_WIDTH).fill('.'))
@@ -162,7 +162,7 @@ export const play = (counterLimit = 1, moves) => {
   let counter = 0
   let settled = true
   let moveIndex = 0
-  let ymax = -1
+  let ymax = 0
   let shapeCoords = { x: undefined, y: undefined }
   let shapeIndex = 0
   let screen = []
@@ -172,8 +172,8 @@ export const play = (counterLimit = 1, moves) => {
     //
     if (settled) {
       console.log('### prepare screen for shape', shapeIndex)
-      shapeCoords = { x: 2, y: ymax + 4 }
-      screen = prepareScreen(screen, ymax, shapeIndex, shapeCoords)
+      shapeCoords = { x: 2, y: ymax + 3 }
+      screen = prepareScreen(screen, shapeIndex, shapeCoords)
       //
       //debugScreen(updateScreen(screen, shapeIndex, shapeCoords), `prepare screen for shape ${shapeIndex}`)
       //
@@ -208,7 +208,7 @@ export const play = (counterLimit = 1, moves) => {
       //debugScreen(updateScreen(screen, shapeIndex, shapeCoords), `settled shape ${shapeIndex}`)
       screen = updateScreen(screen, shapeIndex, shapeCoords)
       settled = true
-      ymax = shapeCoords.y + shape.length - 1
+      ymax = Math.max(ymax, shapeCoords.y + shape.length) 
       shapeIndex = (shapeIndex + 1) % SHAPES.length
       //
       counter++
@@ -216,13 +216,18 @@ export const play = (counterLimit = 1, moves) => {
 
   }
 
+
+  debugScreen(screen, `part 1 with ${counterLimit} blocks # counter: ${counter}`)
+
   return [screen, ymax]
 }
 
 export const part1 = input => {
 
   const [screen, ymax] = play(2022, input)
+  
   console.log('### ymax', ymax)
+
 
   return ymax
 
