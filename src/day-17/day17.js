@@ -216,6 +216,7 @@ export const play2 = (counterLimit = 1, moves) => {
   let shapeCoords = { x: undefined, y: undefined }
   let shapeIndex = 0
   let screen = []
+  let ytoadd = 0
   //
   const memoMap = new Map()
   //
@@ -266,6 +267,7 @@ export const play2 = (counterLimit = 1, moves) => {
       } else {
         //
         const prevMemo = memoMap.get(key)
+        memoMap.clear()
         console.log('### repetition found!', prevMemo)
         const remaining = counterLimit - counter
         const divider = counter - prevMemo.counter
@@ -274,15 +276,15 @@ export const play2 = (counterLimit = 1, moves) => {
         const rest = remaining % divider
         //  move forward
         counter = counter + (factor * divider)
-
-        ymax = ymax + (factor * ydelta)
         const moveIndex2 = (moveIndex + factor * divider) % moves.length
         const shapeIndex2 = (shapeIndex + factor * divider) % SHAPES.length
+        ytoadd = ydelta * factor
 
 
 
         //  
         console.log('### memo', {
+          key,
           prevMemo,
           fxd: factor * divider,
           remaining,
@@ -311,7 +313,7 @@ export const play2 = (counterLimit = 1, moves) => {
 
   debugScreen(screen, `part 1 with ${counterLimit} blocks # counter: ${counter}`)
 
-  return [screen, ymax]
+  return [screen, ymax + ytoadd]
 }
 
 export const part1 = input => {
@@ -326,5 +328,10 @@ export const part1 = input => {
 }
 
 export const part2 = input => {
+  const [screen, ymax] = play2(1000000000000, input)
 
+  console.log('### ymax', ymax)
+
+
+  return ymax
 }
