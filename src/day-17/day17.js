@@ -37,46 +37,31 @@ const SHAPES = [
 
 export const SCREEN_WIDTH = 7
 
-export const prepareScreen = (prevScreen = [], shapeIndex, shapePosition) => {
+export const prepareScreen = (screen = [], shapeIndex, shapePosition) => {
   const shape = SHAPES[shapeIndex]
 
-  if (prevScreen.length < shapePosition.y + shape.length) {
-    const h = shapePosition.y + shape.length - prevScreen.length
+  if (screen.length < shapePosition.y + shape.length) {
+    const h = shapePosition.y + shape.length - screen.length
     //
     const newLines = [...Array(h)].map(_ => Array(SCREEN_WIDTH).fill('.'))
 
-    return [
-      ...prevScreen.map(x => [...x]),
-      ...newLines
-    ]
-
+    for (let i = 0; i < h; i++) {
+      screen.push(Array(SCREEN_WIDTH).fill('.'))
+    }
   }
-
-  return prevScreen
-
-
 
 }
 
-export const updateScreen = (prevScreen = [], shapeIndex, shapePosition) => {
+export const updateScreen = (screen = [], shapeIndex, shapePosition) => {
   const shape = SHAPES[shapeIndex]
-
-  const shapeHeight = shape.length
-  //
-  const tmp = [
-    ...prevScreen.map(x => [...x])
-  ]
 
   for (let i = 0; i < shape.length; i++) {
     for (let j = 0; j < shape[0].length; j++) {
       if (shape[i][j] !== '.') {
-        tmp[shapePosition.y + i][shapePosition.x + j] = '#'
+        screen[shapePosition.y + i][shapePosition.x + j] = '#'
       }
-
     }
   }
-
-  return tmp
 }
 
 export const debugScreen = (screen, message = '') => {
@@ -102,8 +87,6 @@ export const tryMoveLeft = (screen, shapeIndex, shapePosition) => {
       if (screen[shapePosition.y + i][shapePosition.x + j - 1] === '#' &&
         shape[i][j] !== '.') {
 
-        //  debugScreen(updateScreen(screen, shapeIndex, shapePosition), `collision moving left ${shapeIndex}`)
-
         return false
       }
     }
@@ -124,7 +107,6 @@ export const tryMoveRight = (screen, shapeIndex, shapePosition) => {
       if (screen[shapePosition.y + i][shapePosition.x + j + 1] === '#' &&
         shape[i][j] !== '.') {
 
-        //debugScreen(updateScreen(screen, shapeIndex, shapePosition), `collision moving right ${shapeIndex}`)
         return false
       }
     }
@@ -147,10 +129,6 @@ export const tryMoveDown = (screen, shapeIndex, shapePosition) => {
       if (screen[shapePosition.y + i - 1][shapePosition.x + j] === '#' &&
         shape[i][j] !== '.') {
 
-        const t = updateScreen(screen, shapeIndex, shapePosition)
-
-
-        //debugScreen(t, `collision with shape ${shapeIndex} at x: ${shapePosition.x}, y: ${shapePosition.y}`)
 
         return false
       }
@@ -175,9 +153,7 @@ export const play = (counterLimit = 1, moves) => {
     if (settled) {
       //  console.log('### prepare screen for shape', shapeIndex)
       shapeCoords = { x: 2, y: ymax + 3 }
-      screen = prepareScreen(screen, shapeIndex, shapeCoords)
-      //
-      //debugScreen(updateScreen(screen, shapeIndex, shapeCoords), `prepare screen for shape ${shapeIndex}`)
+      prepareScreen(screen, shapeIndex, shapeCoords)
       //
       settled = false
 
@@ -190,12 +166,11 @@ export const play = (counterLimit = 1, moves) => {
 
     if (move === '<' && tryMoveLeft(screen, shapeIndex, shapeCoords)) {
       shapeCoords.x = shapeCoords.x - 1
-      //debugScreen(updateScreen(screen, shapeIndex, shapeCoords), `left ${shapeIndex}`)
     }
 
     if (move === '>' && tryMoveRight(screen, shapeIndex, shapeCoords)) {
       shapeCoords.x = shapeCoords.x + 1
-      //debugScreen(updateScreen(screen, shapeIndex, shapeCoords), `right ${shapeIndex}`)
+
     }
 
     //  down
@@ -203,12 +178,12 @@ export const play = (counterLimit = 1, moves) => {
     if (tryMoveDown(screen, shapeIndex, shapeCoords)) {
       shapeCoords.y = shapeCoords.y - 1
       //  console.log('### move down shape', shapeIndex, 'ok')
-      //debugScreen(updateScreen(screen, shapeIndex, shapeCoords), `down ${shapeIndex}`)
+
     } else {
       const shape = SHAPES[shapeIndex]
       //  console.log('### settled shape', shapeIndex, 'at x:', shapeCoords.x, 'y:', shapeCoords.y, 'with ymax', shapeCoords.y + shape.length - 1)
-      //debugScreen(updateScreen(screen, shapeIndex, shapeCoords), `settled shape ${shapeIndex}`)
-      screen = updateScreen(screen, shapeIndex, shapeCoords)
+
+      updateScreen(screen, shapeIndex, shapeCoords)
       settled = true
       ymax = Math.max(ymax, shapeCoords.y + shape.length)
       shapeIndex = (shapeIndex + 1) % SHAPES.length
@@ -251,9 +226,7 @@ export const play2 = (counterLimit = 1, moves) => {
     if (settled) {
       //  console.log('### prepare screen for shape', shapeIndex)
       shapeCoords = { x: 2, y: ymax + 3 }
-      screen = prepareScreen(screen, shapeIndex, shapeCoords)
-      //
-      //debugScreen(updateScreen(screen, shapeIndex, shapeCoords), `prepare screen for shape ${shapeIndex}`)
+      prepareScreen(screen, shapeIndex, shapeCoords)
       //
       settled = false
 
@@ -266,12 +239,11 @@ export const play2 = (counterLimit = 1, moves) => {
 
     if (move === '<' && tryMoveLeft(screen, shapeIndex, shapeCoords)) {
       shapeCoords.x = shapeCoords.x - 1
-      //debugScreen(updateScreen(screen, shapeIndex, shapeCoords), `left ${shapeIndex}`)
+
     }
 
     if (move === '>' && tryMoveRight(screen, shapeIndex, shapeCoords)) {
       shapeCoords.x = shapeCoords.x + 1
-      //debugScreen(updateScreen(screen, shapeIndex, shapeCoords), `right ${shapeIndex}`)
     }
 
     //  down
@@ -279,18 +251,18 @@ export const play2 = (counterLimit = 1, moves) => {
     if (tryMoveDown(screen, shapeIndex, shapeCoords)) {
       shapeCoords.y = shapeCoords.y - 1
       //  console.log('### move down shape', shapeIndex, 'ok')
-      //debugScreen(updateScreen(screen, shapeIndex, shapeCoords), `down ${shapeIndex}`)
+
     } else {
       const shape = SHAPES[shapeIndex]
       //  console.log('### settled shape', shapeIndex, 'at x:', shapeCoords.x, 'y:', shapeCoords.y, 'with ymax', shapeCoords.y + shape.length - 1)
-      //debugScreen(updateScreen(screen, shapeIndex, shapeCoords), `settled shape ${shapeIndex}`)
-      screen = updateScreen(screen, shapeIndex, shapeCoords)
+
+      updateScreen(screen, shapeIndex, shapeCoords)
       settled = true
       ymax = Math.max(ymax, shapeCoords.y + shape.length)
       //
       const key = memoKey(moveIndex, shapeIndex, screen)
-      if(!memoMap.has(key)) {
-        memoMap.set(key, {ymax, counter})
+      if (!memoMap.has(key)) {
+        memoMap.set(key, { ymax, counter })
       } else {
         //
         const prevMemo = memoMap.get(key)
@@ -302,7 +274,7 @@ export const play2 = (counterLimit = 1, moves) => {
         const rest = remaining % divider
         //  move forward
         counter = counter + (factor * divider)
-        
+
         ymax = ymax + (factor * ydelta)
         const moveIndex2 = (moveIndex + factor * divider) % moves.length
         const shapeIndex2 = (shapeIndex + factor * divider) % SHAPES.length
@@ -330,7 +302,7 @@ export const play2 = (counterLimit = 1, moves) => {
 
       //
       shapeIndex = (shapeIndex + 1) % SHAPES.length
-      
+
       counter++
     }
 
