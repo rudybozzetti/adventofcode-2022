@@ -1,5 +1,5 @@
 
-import { SCREEN_WIDTH, tryMoveLeft, prepareScreen, updateScreen, debugScreen, play, part1 } from './day17'
+import { SCREEN_WIDTH, tryMoveLeft, prepareScreen, updateScreen, debugScreen, play, play2, part1,part2 } from './day17'
 
 const testInput = `>>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>`
 
@@ -64,7 +64,11 @@ describe('day17', () => {
     expect(play(10, testInput)[1]).toBe(17)
   })
 
-  it.only('part1', () => {
+  it('part1', () => {
     expect(part1(testInput)).toBe(3068)
+  })
+
+  it.only('play2', () => {
+    expect(play2(2022, testInput)[1]).toBe(3068)
   })
 })
