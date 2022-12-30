@@ -47,6 +47,11 @@ export const initialState = {
   choices: []
 }
 
+export const part2InitialState = {
+  ...initialState,
+  time: 32
+}
+
 
 
 export const getVisitedKey = ({ ore, clay, obsidian, geode, time, bots }) => {
@@ -272,5 +277,13 @@ export const part1 = inputData => {
 }
 
 export const part2 = inputData => {
+  const blueprints = buildModel(inputData).slice(0, 3)
 
+  const result = blueprints.reduce((acc, blueprint) => {
+    const solution = getBlueprintSolutions(blueprint, part2InitialState)
+    //
+    return acc * solution
+  }, 1)
+
+  return result
 }
