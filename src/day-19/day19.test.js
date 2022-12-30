@@ -1,4 +1,4 @@
-import { buildModel, getBlueprintSolutions, initialState ,part1} from './day19'
+import { buildModel, getBlueprintSolutions, initialState, part1 } from './day19'
 
 const testInput = `Blueprint 1: Each ore robot costs 4 ore. Each clay robot costs 2 ore. Each obsidian robot costs 3 ore and 14 clay. Each geode robot costs 2 ore and 7 obsidian.
 Blueprint 2: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsidian robot costs 3 ore and 8 clay. Each geode robot costs 3 ore and 12 obsidian.`
@@ -31,16 +31,11 @@ describe('day19', () => {
   })
 
   it('getBlueprintSolutions', () => {
-    const solutions = getBlueprintSolutions(testBuileprint1, initialState, 'nop')
-    //
-    //  console.log('### solutions', solutions)
-    const sorted = solutions.sort((a, b) => b.geode - a.geode)
-    //
-    console.log('### sorted', sorted.slice(0, 3))
+    expect(getBlueprintSolutions(testBuileprint1, initialState)).toBe(9)
   })
 
   it.only('part1', () => {
-    expect(part1(testInput)).toBe(12)
+    expect(part1(testInput)).toBe(33)
   })
 
 

@@ -37,6 +37,7 @@ export const initialState = {
   obsidian: 0,
   geode: 0,
   time: 24,
+  counter: 0,
   bots: {
     ore: 1,
     clay: 0,
@@ -46,98 +47,94 @@ export const initialState = {
   choices: []
 }
 
-export const getSolutionVote = (blueprint, solution) => {
-  const oreBotFactor = blueprint.oreRobotOreCost
-  const clayBotFactor = blueprint.clayRobotOreCost
-  const obsidianBotFactor = blueprint.obsidianRobotOreCost + blueprint.obsidianRobotClayCost * blueprint.clayRobotOreCost
-  const geodeBotFactor = blueprint.geodeRobotOreCost + blueprint.geodeRobotObsidianCost * (blueprint.obsidianRobotOreCost + blueprint.obsidianRobotClayCost * blueprint.clayRobotOreCost)
-  //
-  return solution.bots.ore * oreBotFactor +
-    solution.bots.clay * clayBotFactor +
-    solution.bots.obsidian * obsidianBotFactor +
-    solution.bots.geode * geodeBotFactor
+
+
+export const getVisitedKey = ({ ore, clay, obsidian, geode, time, bots }) => {
+
+  return `${ore}|${clay}|${obsidian}|${geode}#${time}#${bots.ore}|${bots.clay}|${bots.obsidian}|${bots.geode}`
 
 }
 
-export const _getBlueprintSolutions = (blueprint, state, op) => {
+/**
+ * es: time left: 5
+ * // if can build a new bot every remaining minute
+ *    #####
+ *     ####
+ *      ###
+ *       ##
+ *        #
+ * 
+ * es: having 3 bots
+ * // current bots
+ *    #####
+ *    #####
+ *    #####     
+ *  
+ * 
+ */
+export const esitmateMax = (initial, bots, timeLeft) => {
+  return initial + bots * timeLeft + (timeLeft * (timeLeft + 1)) / 2
+}
 
-  const lastOp = state.choices[state.choices.length - 1]
 
-  const tmpState = {
-    ...state,
-    choices: [...state.choices, op],
-    //  update mats
-    ore: state.ore + state.bots.ore - (
-      op === 'oreBot' ? blueprint.oreRobotOreCost :
-        op === 'clayBot' ? blueprint.clayRobotOreCost :
-          op === 'obsidianBot' ? blueprint.obsidianRobotOreCost :
-            op === 'geodeBot' ? blueprint.geodeRobotOreCost :
-              0),
-    clay: state.clay + state.bots.clay - (
-      op === 'obsidianBot' ? blueprint.obsidianRobotClayCost : 0),
-    obsidian: state.obsidian + state.bots.obsidian - (
-      op === 'geodeBot' ? blueprint.geodeRobotObsidianCost : 0),
-    geode: state.geode + state.bots.geode,
-    //  update time
-    time: state.time - 1,
-    //  update bots
-    bots: {
-      ore: state.bots.ore + (lastOp === 'oreBot' ? 1 : 0),
-      clay: state.bots.clay + (lastOp === 'clayBot' ? 1 : 0),
-      obsidian: state.bots.obsidian + (lastOp === 'obsidianBot' ? 1 : 0),
-      geode: state.bots.geode + (lastOp === 'geodeBot' ? 1 : 0),
-    }
-  }
+export const getBlueprintSolutions = (blueprint, initState) => {
 
-  const solutions = [{ ...tmpState, vote: getSolutionVote(blueprint, tmpState) }]
+  const maxOreNeeded = Math.max(blueprint.oreRobotOreCost, blueprint.clayRobotOreCost, blueprint.obsidianRobotOreCost, blueprint.geodeRobotOreCost)
+  const maxClayNeeded = blueprint.obsidianRobotClayCost
+  const maxObsidianNeeded = blueprint.geodeRobotObsidianCost
 
-  if (tmpState.time <= 4) {
-    return solutions
-  }
+  //  "nop","nop","clayBot","nop","clayBot",
+  //  "nop","clayBot","nop","nop","nop",
+  //  "obsidianBot","clayBot","nop","nop","obsidianBot",
+  //  "nop","nop","geodeBot","nop","nop",
+  //  "geodeBot","nop","nop","nop"
 
-  const nextAvailOps = [
+  const testChoices = [
     'nop',
-    tmpState.ore >= blueprint.oreRobotOreCost ? 'oreBot' : undefined,
-    tmpState.ore >= blueprint.clayRobotOreCost ? 'clayBot' : undefined,
-    tmpState.ore >= blueprint.obsidianRobotOreCost && tmpState.clay >= blueprint.obsidianRobotClayCost ? 'obsidianBot' : undefined,
-    tmpState.ore >= blueprint.geodeRobotOreCost && tmpState.obsidian >= blueprint.geodeRobotObsidianCost ? 'geodeBot' : undefined
-  ].filter(o => !!o)
+    'nop',
+    'clayBot',
+    'nop',
+    'clayBot',
+    //  5
+    'nop',
+    'clayBot',
+    'nop',
+    'nop',
+    'nop',
+    //  10
+    'obsidianBot',
+    'clayBot',
+    'nop',
+    'nop',
+    'obsidianBot',
+    //  15
+    'nop',
+    'nop',
+    'geodeBot',
+    'nop',
+    'nop',
+    //  20
+    'geodeBot',
+    'nop',
+    'nop',
+    'nop',
 
-  //  console.log('### time', tmpState.time, 'state', tmpState, 'next avail ops', nextAvailOps)
+  ]
+  //
+  const acc = []
+  const stack = [{ state: initState, op: 'nop' }]
 
-  let solutionVove = 0
-  for (const nextOp of nextAvailOps) {
-    const nextSolutions = getBlueprintSolutions(blueprint, tmpState, nextOp).map(s => ({
-      ...s,
-      vote: getSolutionVote(blueprint, s)
-    })).sort((a, b) => b.vote - a.vote)
-
-    for (const s of nextSolutions) {
-
-      //  if (nextSolutions.find((o) => o !== s && o.vote > s.vote)) {
-      //  se trovo una soluzione migliore, evito di accodare
-      //  continue
-      //  }
-
-      solutions.push(s)
-    }
-
-  }
-
-  return solutions
-
-}
+  const visited = new Map()
 
 
-export const getBlueprintSolutions = (blueprint) => {
-  const acc = [initialState]
-  const stack = [{ state: initialState, op: 'nop' }]
-
+  let i = 1;
+  let bestGeode = 0
   while (stack.length > 0) {
     const { state, op } = stack.pop()
     //
 
-    const lastOp = state.choices[state.choices.length - 1]
+    //
+
 
     const tmpState = {
       ...state,
@@ -156,79 +153,101 @@ export const getBlueprintSolutions = (blueprint) => {
       geode: state.geode + state.bots.geode,
       //  update time
       time: state.time - 1,
+      counter: state.counter + 1,
       //  update bots
       bots: {
-        ore: state.bots.ore + (lastOp === 'oreBot' ? 1 : 0),
-        clay: state.bots.clay + (lastOp === 'clayBot' ? 1 : 0),
-        obsidian: state.bots.obsidian + (lastOp === 'obsidianBot' ? 1 : 0),
-        geode: state.bots.geode + (lastOp === 'geodeBot' ? 1 : 0),
+        ore: state.bots.ore + (op === 'oreBot' ? 1 : 0),
+        clay: state.bots.clay + (op === 'clayBot' ? 1 : 0),
+        obsidian: state.bots.obsidian + (op === 'obsidianBot' ? 1 : 0),
+        geode: state.bots.geode + (op === 'geodeBot' ? 1 : 0),
       }
     }
 
-    const nopChoices = tmpState.choices.slice(0, Math.max(blueprint.oreRobotOreCost,blueprint. clayRobotOreCost)).every(o => o === 'nop')
-    if(initialState.time - tmpState.time === Math.max(blueprint.oreRobotOreCost,blueprint. clayRobotOreCost) && nopChoices) {
+    /*
+    const nopChoices = tmpState.choices.slice(-1 * Math.max(blueprint.oreRobotOreCost, blueprint.clayRobotOreCost)).every(o => o === 'nop')
+    if (initialState.time - tmpState.time === Math.max(blueprint.oreRobotOreCost, blueprint.clayRobotOreCost) && nopChoices) {
       //
-      console.log('### continue tmpState.time',tmpState.time,'choices',tmpState.choices )
+      console.log('### continue tmpState.time', tmpState.time, 'choices', tmpState.choices)
+      continue
+    }
+    */
+
+    //  console.log('### tmpState', tmpState)
+
+    const visitedKey = getVisitedKey(tmpState)
+    if (visited.has(visitedKey)) {
+      //  console.log('### already visited', visitedKey)
+      continue
+    }
+    visited.set(visitedKey)
+
+    if (tmpState.time <= 0) {
+      if (tmpState.geode > bestGeode) {
+        bestGeode = tmpState.geode
+        acc.push(tmpState)
+      }
       continue
     }
 
-    if (tmpState.time <= 13) {
-      acc.push(tmpState)
+    if (esitmateMax(tmpState.geode, tmpState.bots.geode, tmpState.time) < bestGeode) {
       continue
     }
 
-    
-    //
-    const canCreateOreRobot = tmpState.ore >= blueprint.oreRobotOreCost
-    const canCreateClayRobot = tmpState.ore >= blueprint.clayRobotOreCost
-    const canCreateObsidianRobot = tmpState.ore >= blueprint.obsidianRobotOreCost && tmpState.clay >= blueprint.obsidianRobotClayCost
-    const canCreateGeodeRobot = tmpState.ore >= blueprint.geodeRobotOreCost && tmpState.obsidian >= blueprint.geodeRobotObsidianCost
-
-    //  console.log('### canCreateClayRobot at', tmpState.time, ':',canCreateClayRobot, '### tmpState.ore',tmpState.ore,'### blueprint.clayRobotOreCost',blueprint.clayRobotOreCost)
-
-    //
-
-    const nextAvailOps = canCreateGeodeRobot ? ['geodeBot']
-        : [
-          'nop',
-          canCreateOreRobot ? 'oreBot' : undefined,
-          canCreateClayRobot ? 'clayBot' : undefined,
-          canCreateObsidianRobot ? 'obsidianBot' : undefined,
-          canCreateGeodeRobot ? 'geodeBot' : undefined
-        ].filter(o => !!o).filter(o => {
-          //  produzione di ore 
-          if (o === 'oreBot' && tmpState.bots.ore >= Math.max(
-            blueprint.oreRobotOreCost,
-            blueprint.clayRobotOreCost,
-            blueprint.obsidianRobotOreCost,
-            blueprint.geodeRobotOreCost
-          )) {
-            return false
-          }
-
-          if (o === 'clayBot' && tmpState.bots.clay >= blueprint.obsidianRobotClayCost) {
-            return false
-          }
-
-          if (o === 'obsidianBot' && tmpState.bots.obsidian >= blueprint.geodeRobotObsidianCost) {
-            return false
-          }
-
-          return true
-        })
-
-    //  console.log('### nextAvailOps at ', tmpState.time, ':', nextAvailOps)
-
-    for (const nextOp of nextAvailOps) {
-      stack.push({ state: tmpState, op: nextOp })
+    //  no more geode bots because not enough obsidian
+    if (esitmateMax(tmpState.obsidian, tmpState.bots.obsidian, tmpState.time) < blueprint.geodeRobotObsidianCost) {
+      //  update best estimate
+      bestGeode = Math.max(bestGeode, tmpState.geode + tmpState.bots.geode * tmpState.time)
+      continue
     }
+
+    //  no more geode bots because not enough ore
+    if (esitmateMax(tmpState.ore, tmpState.bots.ore, tmpState.time) < blueprint.geodeRobotOreCost) {
+      //  update best estimate
+      bestGeode = Math.max(bestGeode, tmpState.geode + tmpState.bots.geode * tmpState.time)
+      continue
+    }
+
+
+
+    //  eval no operation
+    if ((tmpState.bots.obsidian && tmpState.obsidian < maxObsidianNeeded) ||
+      (tmpState.bots.clay && tmpState.clay < maxClayNeeded) ||
+      (tmpState.ore < maxOreNeeded)) {
+      stack.push({ state: tmpState, op: 'nop' })
+    }
+
+
+    //  eval build geode bot only if have enough resources
+    if (tmpState.obsidian >= blueprint.geodeRobotObsidianCost && tmpState.ore >= blueprint.geodeRobotOreCost) {
+      stack.push({ state: tmpState, op: 'geodeBot' })
+    }
+
+    //  eval build obsidian bot only if have enough resources and less bots than needed
+    if (tmpState.clay >= blueprint.obsidianRobotClayCost && tmpState.ore >= blueprint.obsidianRobotOreCost && tmpState.obsidian < maxObsidianNeeded) {
+      stack.push({ state: tmpState, op: 'obsidianBot' })
+
+    }
+
+    //  eval build clay bot only if have enough resources and less bots than needed
+    if (tmpState.ore >= blueprint.clayRobotOreCost && tmpState.bots.clay < maxClayNeeded) {
+      stack.push({ state: tmpState, op: 'clayBot' })
+    }
+
+    //  eval build ore bot only if have enough resources and less bots than needed
+    if (tmpState.ore >= blueprint.oreRobotOreCost && tmpState.bots.ore < maxOreNeeded) {
+      stack.push({ state: tmpState, op: 'oreBot' })
+    }
+
+
+    i++
   }
 
-  return acc
+  //  return acc
+  return bestGeode
 }
 
 export const dumpSolutions = solutions => {
-  const stream = solutions.reduce((acc, s) => acc + "\n" + JSON.stringify(s) + "\n\n", "")
+  const stream = solutions.reduce((acc, s) => acc + "\n" + JSON.stringify(s), "")
   fs.writeFile(path.resolve(__dirname, 'debug.txt'), "\n===\n\n" + stream, { flag: 'w' }, (err) => {
     if (err) {
       console.error('### error', err)
@@ -240,15 +259,16 @@ export const dumpSolutions = solutions => {
 export const part1 = inputData => {
   const blueprints = buildModel(inputData)
 
-  const solutions = getBlueprintSolutions(blueprints[0])
-  const sorted = solutions
-    .sort((a, b) => a.time === b.time ? b.geode - a.geode : a.time - b.time)
-  //  .filter(o => o.time === solutions[0].time)
 
-  //  console.log("\n\n### solutions", sorted.slice(0, 10))
-  //  console.log("\n\n### solutions", sorted)
-  dumpSolutions(sorted)
+  const result = blueprints.reduce((acc, blueprint) => {
+    const solution = getBlueprintSolutions(blueprint, initialState)
+    //
+    return acc + blueprint.id * solution
+  }, 0)
 
+
+
+  return result
 }
 
 export const part2 = inputData => {
