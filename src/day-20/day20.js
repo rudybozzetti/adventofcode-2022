@@ -1,52 +1,41 @@
 
 
+export const mmod = (n, m) => ((n % m) + m) % m
+
 export const parseInput = input => {
   return input.split(/\n/).map(n => parseInt(n))
 }
 
+export const getNewIndex = (numbers, n) => {
+  const i = numbers.indexOf(n)
+
+  return i + n <= 0
+    ? mmod((i - 1 + n), numbers.length)
+    : (i + n) > numbers.length
+      ? mmod((i + 1 + n), numbers.length)
+      : mmod((i + n), numbers.length)
+
+}
+
+export const move = (numbers, n) => {
+  if (n === 0) return numbers
+  //
+  const i = numbers.indexOf(n)
+  const newIndex = getNewIndex(numbers, n)
+  numbers.splice(i, 1)
+  numbers.splice(newIndex, 0, n)
+  return numbers
+}
+
 export const decrypt = numbers => {
-
-  return numbers.reduce((acc, n) => {
-
-    if (n === 0) return acc
-
-    const i = acc.indexOf(n)
-
-    //
-    //  console.log('### index of', n, 'is', i)
-    //
-    const newIndex = (i + n) % numbers.length > 0 ? (i + n) % numbers.length : ((i + n) % numbers.length) + numbers.length - 1
-
-    //  console.log('### newIndex', newIndex)
-
-    if (i < newIndex) {
-      const result = [...acc.slice(0, i), ...acc.slice(i + 1, newIndex + 1), n, ...acc.slice(newIndex + 1)]
-
-      //  console.log('### from', acc, 'to result', result)
-
-      return result
-    } else {
-      const result = [...acc.slice(0, newIndex + 1), n, ...acc.slice(newIndex + 1, i), ...acc.slice(i + 1)]
-
-      //  console.log('### from', acc, 'to result', result)
-
-      return result
-    }
-
-
-
-
-
-
-
-  }, [...numbers])
-
-
+  return numbers.reduce(move, [...numbers])
 }
 
 export const part1 = input => {
   const numbers = parseInput(input)
   const decrypted = decrypt(numbers)
+
+  console.log('### numbers.length', numbers.length, '### decrypted.length', decrypted.length)
   //
   const pos = decrypted.indexOf(0)
   //
