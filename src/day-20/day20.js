@@ -2,8 +2,8 @@
 
 export const mmod = (n, m) => ((n % m) + m) % m
 
-export const parseInput = input => {
-  return input.split(/\n/).map(n => parseInt(n))
+export const parseInput = (input, encKey = 1) => {
+  return input.split(/\n/).map(n => parseInt(n) * encKey)
 }
 
 export const getNewIndex = (n, i, mod) => {
@@ -14,12 +14,14 @@ export const getNewIndex = (n, i, mod) => {
 }
 
 export const move = (numbers, n, oi) => {
+  //
   if (n === 0) return numbers
   //
   const i = numbers.findIndex(o => o.n === n && o.oi === oi)
 
   numbers.splice(i, 1)
   const newIndex = getNewIndex(n, i, numbers.length)
+
   numbers.splice(newIndex, 0, { n, oi })
   //
   return numbers
@@ -33,9 +35,40 @@ export const decrypt = numbers => {
 }
 
 
+
+
 export const part1 = input => {
   const numbers = parseInput(input)
   const decrypted = decrypt(numbers)
+  //console.log('### numbers.length', numbers.length, '### decrypted.length', decrypted.length)
+  //
+  const pos = decrypted.indexOf(0)
+  //
+  const n1000th = decrypted[(pos + 1000) % numbers.length]
+  const n2000th = decrypted[(pos + 2000) % numbers.length]
+  const n3000th = decrypted[(pos + 3000) % numbers.length]
+  console.log('### n1000th', n1000th)
+  console.log('### n2000th', n2000th)
+  console.log('### n3000th', n3000th)
+
+  return n1000th + n2000th + n3000th
+}
+
+export const decrypt2 = numbers => {
+  let tmp = numbers.map((n, oi) => ({ n, oi })) //  oi: original index
+  for (let i = 0; i < 10; i++) {
+    tmp = numbers.reduce(move, tmp)
+  }
+
+  const result = tmp.map(({ n }) => n)
+  return result
+}
+
+
+export const part2 = input => {
+  const encKey = 811589153
+  const numbers = parseInput(input, encKey)
+  const decrypted = decrypt2(numbers)
   //console.log('### numbers.length', numbers.length, '### decrypted.length', decrypted.length)
   //
   const pos = decrypted.indexOf(0)

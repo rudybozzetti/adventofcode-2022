@@ -1,5 +1,5 @@
 
-import { parseInput, mmod, getNewIndex, move, decrypt, part1 } from './day20'
+import { parseInput, mmod, getNewIndex, move, decrypt, part1, part2 } from './day20'
 
 const testInput = `1
 2
@@ -68,7 +68,11 @@ describe('day20', () => {
     expect(decrypt(testData)).toStrictEqual(testDecrypted)
   })
 
-  it('part1', () => {
+  it.only('part1', () => {
     expect(part1(testInput)).toStrictEqual(3)
+  })
+
+  it.only('part2', () => {
+    expect(part2(testInput)).toStrictEqual(1623178306)
   })
 })
