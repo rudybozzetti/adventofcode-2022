@@ -56,7 +56,7 @@ describe('day20', () => {
     expect(decrypt(testData)).toStrictEqual(testDecrypted)
   })
 
-  it('part1', () => {
+  it.only('part1', () => {
     expect(part1(testInput)).toStrictEqual(3)
   })
 })

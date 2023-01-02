@@ -6,8 +6,8 @@ export const parseInput = input => {
   return input.split(/\n/).map(n => parseInt(n))
 }
 
-export const getNewIndex = (numbers, n) => {
-  const i = numbers.indexOf(n)
+export const getNewIndex = (numbers, n, oi) => {
+  const i = numbers.findIndex(o => o.n === n && o.oi === oi)
 
   return i + n <= 0
     ? mmod((i - 1 + n), numbers.length)
@@ -17,23 +17,28 @@ export const getNewIndex = (numbers, n) => {
 
 }
 
-export const move = (numbers, n) => {
+export const move = (numbers, n, oi) => {
   if (n === 0) return numbers
   //
-  const i = numbers.indexOf(n)
-  const newIndex = getNewIndex(numbers, n)
+  const i = numbers.findIndex(o => o.n === n && o.oi === oi)
+  const newIndex = getNewIndex(numbers, n, oi)
   numbers.splice(i, 1)
-  numbers.splice(newIndex, 0, n)
+  numbers.splice(newIndex, 0, { n, oi })
   return numbers
 }
 
 export const decrypt = numbers => {
-  return numbers.reduce(move, [...numbers])
+  const tmp = numbers.map((n, oi) => ({ n, oi }))
+  const res = numbers.reduce(move, tmp)
+  const result = res.map(({ n }) => n)
+  return result
 }
+
 
 export const part1 = input => {
   const numbers = parseInput(input)
   const decrypted = decrypt(numbers)
+
 
   console.log('### numbers.length', numbers.length, '### decrypted.length', decrypted.length)
   //
