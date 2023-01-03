@@ -1,5 +1,5 @@
 
-import { parseInput, solve, part1 } from './day21'
+import { parseInput, solve, part1, solve2, part2, solveSimepleExpr } from './day21'
 
 
 const testInput = `root: pppw + sjmn
@@ -52,4 +52,9 @@ describe('day21', () => {
       expect(result).toBe(152)
     })
   })
+
+  it.only('solve2', () => {
+    expect(solve2(testModel)).toBe(301)
+  })
+
 })

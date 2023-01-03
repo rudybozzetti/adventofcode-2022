@@ -70,3 +70,153 @@ export const part1 = (input) => {
 
   return result
 }
+
+//
+
+export const isFormula = s => {
+  return typeof s === 'string' ? /\(\w+\s[+\-*\/=]\s\w+\)/.test(s) : false
+}
+
+export const parseFormula = s => {
+
+}
+
+
+export const solveSimepleExpr = (left, op, right) => {
+
+  if (isFormula(left)) {
+    const matches = left.match(/\((\w+)\s([+\-*/=])\s(\w+)\)/)
+    console.log('### matches', matches)
+
+
+
+  } else if (isFormula(right)) {
+    const matches = right.match(/\((\w+)\s([+\-*/=])\s(\w+)\)/)
+
+    if (matches[1] === 'x') {
+      return `(${left} ${op} x ${matches[2]} ${solveSimepleExpr(left, op, parseInt(matches[3]))})`
+    } else {
+      return `(${solveSimepleExpr(left, op, parseInt(matches[1]))} ${matches[2]} ${left} ${op} x)`
+    }
+
+
+  } else {
+    switch (op) {
+      case '+':
+        return left + right
+
+      case '-':
+        return left - right
+
+      case '*':
+        return left * right
+
+      case '/':
+        return left / right
+
+      case '=':
+        return left === right
+    }
+  }
+}
+
+export const findMonkey = (monkeys, name) => {
+  return monkeys.find(o => o.name === name)
+}
+
+export const calcMonkeyValue = (left, right, op) => {
+  console.log('### calcMonkeyValue left, right, op', left, right, op)
+  switch (op) {
+    case '+':
+      return left + right
+
+    case '-':
+      return left - right
+
+    case '*':
+      return left * right
+
+    case '/':
+      return left / right
+
+  }
+}
+
+export const calcMonkeyInverseValue = (left, right, op, isLeft) => {
+  console.log('### calcMonkeyInverseValue left, right, op, isLeft', left, right, op, isLeft)
+  switch (op) {
+    case '+':
+      return right - left
+
+    case '-':
+      return isLeft ? left + right : left - right
+
+    case '*':
+      return right / left
+
+    case '/':
+      return isLeft ? left * right : left / right
+
+  }
+}
+
+export const getMonkeyValue = (monkeys, monkey) => {
+  console.log('### getMonkeyValue monkey', monkey)
+  if (monkey.yell !== undefined) {
+    return monkey.yell
+  }
+
+  const m1 = findMonkey(monkeys, monkey.name1)
+  const m2 = findMonkey(monkeys, monkey.name2)
+
+  return calcMonkeyValue(getMonkeyValue(monkeys, m1), getMonkeyValue(monkeys, m2), monkey.op)
+
+}
+
+export const evalMonkey = (monkey, monkeys) => {
+  const parent = monkeys.find(o => o.name1 === monkey.name || o.name2 === monkey.name)
+  //
+  console.log('### evalMonkey parent ', parent, 'of', monkey)
+
+  const targetName = parent.name1 === monkey.name ? parent.name2 : parent.name1
+  const m = findMonkey(monkeys, targetName)
+
+  console.log('### evalMonkey targetName ', targetName)
+
+  if (parent.name === 'root') {
+    return getMonkeyValue(monkeys, m)
+  }
+
+  return calcMonkeyInverseValue(getMonkeyValue(monkeys, m), evalMonkey(parent, monkeys), parent.op, parent.name1 === monkey.name)
+
+}
+
+export const solve2 = (monkeys) => {
+  const root = monkeys.find(o => o.name === 'root')
+  root['op'] = '='
+
+  const humn = monkeys.find(o => o.name === 'humn')
+  humn['yell'] = 'x'
+
+  const x = evalMonkey(humn, monkeys)
+
+  console.log('### x', x)
+
+
+
+  //
+
+  return x
+
+}
+
+export const part2 = (input) => {
+  const model = parseInput(input)
+  //
+  const result = solve2(model)
+
+  return result
+}
+
+
+//  x = 3453748220116

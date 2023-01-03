@@ -1,0 +1,8 @@
+https://github.com/skagedal/advent-of-code/blob/c6172ed21197213ae27140afc8aaf15dc0bf81d0/java/app/src/main/java/tech/skagedal/javaaoc/year2022/Day21.java#L168-L192
+
+
+https://github.com/RyanFoulds/AdventOfCode22/tree/main/Day21/src/main/java/xyz/foulds/aoc/year22/day21
+
+
+
+part 2 should be: 3453748220116
