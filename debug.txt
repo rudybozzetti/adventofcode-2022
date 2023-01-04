@@ -1,0 +1,266 @@
+  console.log
+    ### evalMonkey humn parent  {
+      name: 'ptdq',
+      yell: undefined,
+      name1: 'humn',
+      name2: 'dvpt',
+      op: '-'
+    } of { name: 'humn', yell: 'x' }
+
+      at log (src/day-21/day21.js:184:11)
+
+  console.log
+    ### evalMonkey targetName  dvpt
+
+      at log (src/day-21/day21.js:189:11)
+
+  console.log
+    ### getMonkeyValue monkey { name: 'dvpt', yell: 3 }
+
+      at log (src/day-21/day21.js:164:11)
+
+  console.log
+    ### getMonkeyValue dvpt result 3
+
+      at log (src/day-21/day21.js:166:13)
+
+  console.log
+    ### evalMonkey ptdq parent  {
+      name: 'lgvd',
+      yell: undefined,
+      name1: 'ljgn',
+      name2: 'ptdq',
+      op: '*'
+    } of {
+      name: 'ptdq',
+      yell: undefined,
+      name1: 'humn',
+      name2: 'dvpt',
+      op: '-'
+    }
+
+      at log (src/day-21/day21.js:184:11)
+
+  console.log
+    ### evalMonkey targetName  ljgn
+
+      at log (src/day-21/day21.js:189:11)
+
+  console.log
+    ### getMonkeyValue monkey { name: 'ljgn', yell: 2 }
+
+      at log (src/day-21/day21.js:164:11)
+
+  console.log
+    ### getMonkeyValue ljgn result 2
+
+      at log (src/day-21/day21.js:166:13)
+
+  console.log
+    ### evalMonkey lgvd parent  {
+      name: 'cczh',
+      yell: undefined,
+      name1: 'sllz',
+      name2: 'lgvd',
+      op: '+'
+    } of {
+      name: 'lgvd',
+      yell: undefined,
+      name1: 'ljgn',
+      name2: 'ptdq',
+      op: '*'
+    }
+
+      at log (src/day-21/day21.js:184:11)
+
+  console.log
+    ### evalMonkey targetName  sllz
+
+      at log (src/day-21/day21.js:189:11)
+
+  console.log
+    ### getMonkeyValue monkey { name: 'sllz', yell: 4 }
+
+      at log (src/day-21/day21.js:164:11)
+
+  console.log
+    ### getMonkeyValue sllz result 4
+
+      at log (src/day-21/day21.js:166:13)
+
+  console.log
+    ### evalMonkey cczh parent  {
+      name: 'pppw',
+      yell: undefined,
+      name1: 'cczh',
+      name2: 'lfqf',
+      op: '/'
+    } of {
+      name: 'cczh',
+      yell: undefined,
+      name1: 'sllz',
+      name2: 'lgvd',
+      op: '+'
+    }
+
+      at log (src/day-21/day21.js:184:11)
+
+  console.log
+    ### evalMonkey targetName  lfqf
+
+      at log (src/day-21/day21.js:189:11)
+
+  console.log
+    ### getMonkeyValue monkey { name: 'lfqf', yell: 4 }
+
+      at log (src/day-21/day21.js:164:11)
+
+  console.log
+    ### getMonkeyValue lfqf result 4
+
+      at log (src/day-21/day21.js:166:13)
+
+  console.log
+    ### evalMonkey pppw parent  {
+      name: 'root',
+      yell: undefined,
+      name1: 'pppw',
+      name2: 'sjmn',
+      op: '='
+    } of {
+      name: 'pppw',
+      yell: undefined,
+      name1: 'cczh',
+      name2: 'lfqf',
+      op: '/'
+    }
+
+      at log (src/day-21/day21.js:184:11)
+
+  console.log
+    ### evalMonkey targetName  sjmn
+
+      at log (src/day-21/day21.js:189:11)
+
+  console.log
+    ### getMonkeyValue monkey {
+      name: 'sjmn',
+      yell: undefined,
+      name1: 'drzm',
+      name2: 'dbpl',
+      op: '*'
+    }
+
+      at log (src/day-21/day21.js:164:11)
+
+  console.log
+    ### getMonkeyValue monkey {
+      name: 'drzm',
+      yell: undefined,
+      name1: 'hmdt',
+      name2: 'zczc',
+      op: '-'
+    }
+
+      at log (src/day-21/day21.js:164:11)
+
+  console.log
+    ### getMonkeyValue monkey { name: 'hmdt', yell: 32 }
+
+      at log (src/day-21/day21.js:164:11)
+
+  console.log
+    ### getMonkeyValue hmdt result 32
+
+      at log (src/day-21/day21.js:166:13)
+
+  console.log
+    ### getMonkeyValue monkey { name: 'zczc', yell: 2 }
+
+      at log (src/day-21/day21.js:164:11)
+
+  console.log
+    ### getMonkeyValue zczc result 2
+
+      at log (src/day-21/day21.js:166:13)
+
+  console.log
+    ### calcMonkeyValue left, right, op 32 2 -
+
+      at log (src/day-21/day21.js:128:11)
+
+  console.log
+    ### getMonkeyValue drzm result 30
+
+      at log (src/day-21/day21.js:175:11)
+
+  console.log
+    ### getMonkeyValue monkey { name: 'dbpl', yell: 5 }
+
+      at log (src/day-21/day21.js:164:11)
+
+  console.log
+    ### getMonkeyValue dbpl result 5
+
+      at log (src/day-21/day21.js:166:13)
+
+  console.log
+    ### calcMonkeyValue left, right, op 30 5 *
+
+      at log (src/day-21/day21.js:128:11)
+
+  console.log
+    ### getMonkeyValue sjmn result 150
+
+      at log (src/day-21/day21.js:175:11)
+
+  console.log
+    ### evalMokey  pppw result 150
+
+      at log (src/day-21/day21.js:193:13)
+
+  console.log
+    ### calcMonkeyInverseValue left, right, op, isLeft 4 150 / true
+
+      at log (src/day-21/day21.js:146:11)
+
+  console.log
+    ### evalMokey reverse cczh result 600
+
+      at log (src/day-21/day21.js:199:11)
+
+  console.log
+    ### calcMonkeyInverseValue left, right, op, isLeft 4 600 + false
+
+      at log (src/day-21/day21.js:146:11)
+
+  console.log
+    ### evalMokey reverse lgvd result 596
+
+      at log (src/day-21/day21.js:199:11)
+
+  console.log
+    ### calcMonkeyInverseValue left, right, op, isLeft 2 596 * false
+
+      at log (src/day-21/day21.js:146:11)
+
+  console.log
+    ### evalMokey reverse ptdq result 298
+
+      at log (src/day-21/day21.js:199:11)
+
+  console.log
+    ### calcMonkeyInverseValue left, right, op, isLeft 3 298 - true
+
+      at log (src/day-21/day21.js:146:11)
+
+  console.log
+    ### evalMokey reverse humn result 301
+
+      at log (src/day-21/day21.js:199:11)
+
+  console.log
+    ### x 301
+
+      at log (src/day-21/day21.js:213:11)
+

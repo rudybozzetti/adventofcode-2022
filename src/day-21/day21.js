@@ -163,20 +163,25 @@ export const calcMonkeyInverseValue = (left, right, op, isLeft) => {
 export const getMonkeyValue = (monkeys, monkey) => {
   console.log('### getMonkeyValue monkey', monkey)
   if (monkey.yell !== undefined) {
+    console.log('### getMonkeyValue', monkey.name, "result", monkey.yell)
     return monkey.yell
   }
 
   const m1 = findMonkey(monkeys, monkey.name1)
   const m2 = findMonkey(monkeys, monkey.name2)
 
-  return calcMonkeyValue(getMonkeyValue(monkeys, m1), getMonkeyValue(monkeys, m2), monkey.op)
+  const result = calcMonkeyValue(getMonkeyValue(monkeys, m1), getMonkeyValue(monkeys, m2), monkey.op)
+
+  console.log('### getMonkeyValue', monkey.name, "result", result)
+
+  return result
 
 }
 
 export const evalMonkey = (monkey, monkeys) => {
   const parent = monkeys.find(o => o.name1 === monkey.name || o.name2 === monkey.name)
   //
-  console.log('### evalMonkey parent ', parent, 'of', monkey)
+  console.log('### evalMonkey', monkey.name, 'parent ', parent, 'of', monkey)
 
   const targetName = parent.name1 === monkey.name ? parent.name2 : parent.name1
   const m = findMonkey(monkeys, targetName)
@@ -184,11 +189,16 @@ export const evalMonkey = (monkey, monkeys) => {
   console.log('### evalMonkey targetName ', targetName)
 
   if (parent.name === 'root') {
-    return getMonkeyValue(monkeys, m)
+    const result = getMonkeyValue(monkeys, m)
+    console.log('### evalMokey ', monkey.name, "result", result)
+    return result
   }
 
-  return calcMonkeyInverseValue(getMonkeyValue(monkeys, m), evalMonkey(parent, monkeys), parent.op, parent.name1 === monkey.name)
+  const result = calcMonkeyInverseValue(getMonkeyValue(monkeys, m), evalMonkey(parent, monkeys), parent.op, parent.name1 === monkey.name)
 
+  console.log('### evalMokey reverse', monkey.name, "result", result)
+
+  return result
 }
 
 export const solve2 = (monkeys) => {
