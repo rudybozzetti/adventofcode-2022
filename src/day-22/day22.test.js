@@ -1,5 +1,5 @@
 
-import { parseInput, move, updatePosition, part1 } from './day22'
+import { parseInput, move, updatePosition, moveRight, moveLeft, part1 } from './day22'
 
 const testInput = `        ...#
         .#..
@@ -51,6 +51,20 @@ describe('day22', () => {
       direction: '>'
     })
 
+  })
+
+  it('moveRight', () => {
+    expect(moveRight([' .#.'], 10, { x: 1, y: 0 })).toStrictEqual({ x: 1, y: 0 })
+    expect(moveRight([' .#.'], 10, { x: 3, y: 0 })).toStrictEqual({ x: 1, y: 0 })
+    expect(moveRight(['#...'], 10, { x: 1, y: 0 })).toStrictEqual({ x: 3, y: 0 })
+    expect(moveRight(['#...'], 1, { x: 1, y: 0 })).toStrictEqual({ x: 2, y: 0 })
+  })
+
+  it('moveLeft', () => {
+    expect(moveLeft([' .#.'], 10, { x: 1, y: 0 })).toStrictEqual({ x: 3, y: 0 })
+    expect(moveLeft([' .#.'], 10, { x: 3, y: 0 })).toStrictEqual({ x: 3, y: 0 })
+    expect(moveLeft(['#...'], 10, { x: 3, y: 0 })).toStrictEqual({ x: 1, y: 0 })
+    expect(moveLeft(['#...'], 1, { x: 3, y: 0 })).toStrictEqual({ x: 2, y: 0 })
   })
 
   it('part1', () => {

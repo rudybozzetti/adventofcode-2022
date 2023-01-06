@@ -81,7 +81,7 @@ export const moveLeft = (map, cmd, position) => {
   const row = map[position.y]
   return Array.from({ length: cmd }).reduce(({ x, y }) => {
     const firstAvail = row.split('').findIndex(o => o === '.' || o === '#')
-    const newX = ((x - 1) < firstAvail) ? (row.length - 1) : firstAvail
+    const newX = ((x - 1) < firstAvail) ? (row.length - 1) : x - 1
     const nextCell = row[newX]
 
     if (nextCell === '#') {
