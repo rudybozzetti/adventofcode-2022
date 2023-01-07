@@ -258,6 +258,46 @@ export const part1 = input => {
   return result
 }
 
+//
+
+export const getFacesBoundaries = (mode = '') => {
+
+  return mode === 'test' ? {
+    1: [8, 0, 11, 3],
+    2: [0, 4, 3, 7],
+    3: [4, 4, 7, 7],
+    4: [8, 4, 11, 7],
+    5: [8, 8, 11, 11],
+    6: [12, 8, 15, 11],
+  } : {
+    1: [50, 0, 99, 49],
+    2: [100, 0, 149, 49],
+    3: [50, 50, 99, 99],
+    4: [0, 150, 49, 199],
+    5: [0, 100, 49, 149],
+    6: [50, 100, 99, 149],
+  }
+}
+
+export const getFace = (x, y, mode = '') => {
+  const boundaries = getFacesBoundaries(mode)
+
+  const result = Object.entries(boundaries).reduce((acc, [face, [minx, miny, maxx, maxy]]) => {
+    if (x >= minx && x <= maxx && y >= miny && y <= maxy) {
+      return parseInt(face)
+    }
+    return acc
+  }, 0)
+
+
+  if (result === 0) {
+    throw Error(`getFace x,y ${x},${y} mode ${mode} shoold not be here`)
+  }
+
+  return result
+}
+
+
 export const part2 = input => {
 
 }
