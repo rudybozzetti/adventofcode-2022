@@ -1,4 +1,4 @@
-import { parseInput } from './day23'
+import { parseInput, part1 } from './day23'
 
 const testInput = `....#..
 ..###.#
@@ -24,5 +24,9 @@ describe('day23', () => {
   it('parseInput', () => {
     expect(parseInput(testInput)).toStrictEqual(testModel)
 
+  })
+
+  it('part1', () => {
+    expect(part1(testInput)).toBe(110)
   })
 })
