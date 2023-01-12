@@ -9,10 +9,11 @@ export const parseInput = data => {
   }, [])
 }
 
-export const Nfinder = (x,y) => i => (Math.abs(i.x - x) <= 1 && (i.y -y) === -1)
-export const Efinder = (x,y) => i => (i.x - x) === 1 && Math.abs(i.y - y) <= 1
-export const Sfinder = (x,y) => i => Math.abs(i.x - x) <= 1 && (i.y - y) === 1
-export const Wfinder = (x,y) => i => (i.x - x) === -1 && Math.abs(i.y - y) <= 1
+export const nearFinder = (x,y) => i => (Math.abs(i.x-x) === 1 && Math.abs(i.y-y) === 1)
+export const Nfinder = (x, y) => i => (Math.abs(i.x - x) <= 1 && (i.y - y) === -1)
+export const Efinder = (x, y) => i => (i.x - x) === 1 && Math.abs(i.y - y) <= 1
+export const Sfinder = (x, y) => i => Math.abs(i.x - x) <= 1 && (i.y - y) === 1
+export const Wfinder = (x, y) => i => (i.x - x) === -1 && Math.abs(i.y - y) <= 1
 
 
 export const getNewPosition = ({ x, y }, items, directions) => {
@@ -20,7 +21,7 @@ export const getNewPosition = ({ x, y }, items, directions) => {
     if (proposed === undefined) {
       switch (direction) {
         case 'N':
-          const fN = items.find(Nfinder(x,y))
+          const fN = items.find(Nfinder(x, y))
           if (fN === undefined) {
             return {
               x,
@@ -29,7 +30,7 @@ export const getNewPosition = ({ x, y }, items, directions) => {
           }
           break
         case 'E':
-          const fE = items.find(Efinder(x,y))
+          const fE = items.find(Efinder(x, y))
           if (fE === undefined) {
             return {
               x: x + 1,
@@ -38,7 +39,7 @@ export const getNewPosition = ({ x, y }, items, directions) => {
           }
           break
         case 'S':
-          const fS = items.find(Sfinder(x,y))
+          const fS = items.find(Sfinder(x, y))
           if (fS === undefined) {
             return {
               x,
@@ -47,7 +48,7 @@ export const getNewPosition = ({ x, y }, items, directions) => {
           }
           break
         case 'W':
-          const fW = items.find(Wfinder(x,y))
+          const fW = items.find(Wfinder(x, y))
           if (fW === undefined) {
             return {
               x: x - 1,
@@ -65,7 +66,7 @@ export const doRoundFirstHalf = (items, directions) => {
 
   return items.map(({ x, y }) => {
     //
-    const canMove = items.find(i => Math.abs(i.x - x) === 1 && Math.abs(i.y - y) === 1) !== undefined
+    const canMove = items.find(nearFinder(x,y)) !== undefined
     //
     if (canMove) {
       const newPosition = getNewPosition({ x, y }, items, directions)
@@ -74,7 +75,7 @@ export const doRoundFirstHalf = (items, directions) => {
         proposed: newPosition
       }
     }
-    return { x, y}
+    return { x, y }
   })
 }
 
@@ -85,7 +86,6 @@ export const doRoundSecondHalf = items => {
       return {
         x: proposed.x,
         y: proposed.y,
-        proposed
       }
     }
 
