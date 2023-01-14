@@ -9,7 +9,11 @@ export const parseInput = data => {
   }, [])
 }
 
-export const nearFinder = (x,y) => i => (Math.abs(i.x-x) === 1 && Math.abs(i.y-y) === 1)
+export const nearFinder = (x, y) => i => {
+  const d = Math.abs(i.x - x) + Math.abs(i.y - y)
+
+  return d === 1 || d === 2
+}
 export const Nfinder = (x, y) => i => (Math.abs(i.x - x) <= 1 && (i.y - y) === -1)
 export const Efinder = (x, y) => i => (i.x - x) === 1 && Math.abs(i.y - y) <= 1
 export const Sfinder = (x, y) => i => Math.abs(i.x - x) <= 1 && (i.y - y) === 1
@@ -66,7 +70,7 @@ export const doRoundFirstHalf = (items, directions) => {
 
   return items.map(({ x, y }) => {
     //
-    const canMove = items.find(nearFinder(x,y)) !== undefined
+    const canMove = items.find(nearFinder(x, y)) !== undefined
     //
     if (canMove) {
       const newPosition = getNewPosition({ x, y }, items, directions)
@@ -96,11 +100,38 @@ export const doRoundSecondHalf = items => {
   })
 }
 
+export const debugItems = (items, round) => {
+  const [minx, miny, maxx, maxy] = items.reduce((acc, { x, y }) => {
+    return [Math.min(acc[0], x), Math.min(acc[1], y), Math.max(acc[2], x), Math.max(acc[3], y)]
+
+  }, [0, 0, 0, 0])
+
+
+  console.log('### minx, miny, maxx, maxy', minx, miny, maxx, maxy)
+
+
+  let result = ''
+  for (let y = miny; y <= maxy; y++) {
+    for (let x = minx; x <= maxx; x++) {
+      if (items.find(o => o.x === x && o.y === y)) {
+        result += '#'
+      } else {
+        result += '.'
+      }
+    }
+    result += "\n"
+  }
+
+  console.log('### result round ', round, '###', "\n", result)
+}
+
 export const solve = (items, rounds) => {
-  return Array.from({ length: rounds }).reduce((acc, _) => {
+  return Array.from({ length: rounds }).reduce((acc, _, round) => {
     const withProposedPositions = doRoundFirstHalf(acc.items, acc.directions)
     console.log('### solve withProposedPositions', withProposedPositions)
     const newItems = doRoundSecondHalf(withProposedPositions)
+
+    debugItems(newItems, round + 1)
 
     return {
       items: newItems,
