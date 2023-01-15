@@ -10,9 +10,13 @@ export const parseInput = data => {
 }
 
 export const nearFinder = (x, y) => i => {
-  const d = Math.abs(i.x - x) + Math.abs(i.y - y)
+  const xDistance = Math.abs(i.x - x)
+  const yDistance = Math.abs(i.y - y)
+  return xDistance === 0 ? yDistance === 1 :
+    yDistance === 0 ? xDistance === 1 :
+      (xDistance === 1 && yDistance === 1)
 
-  return d === 1 || d === 2
+
 }
 export const Nfinder = (x, y) => i => (Math.abs(i.x - x) <= 1 && (i.y - y) === -1)
 export const Efinder = (x, y) => i => (i.x - x) === 1 && Math.abs(i.y - y) <= 1
@@ -67,6 +71,7 @@ export const getNewPosition = ({ x, y }, items, directions) => {
 }
 
 export const doRoundFirstHalf = (items, directions) => {
+  //  console.log('### doRoundFirstHalf directions', directions)
 
   return items.map(({ x, y }) => {
     //
@@ -107,14 +112,13 @@ export const debugItems = (items, round) => {
   }, [0, 0, 0, 0])
 
 
-  console.log('### minx, miny, maxx, maxy', minx, miny, maxx, maxy)
-
-
   let result = ''
+  let charcode = 'A'.charCodeAt(0)
   for (let y = miny; y <= maxy; y++) {
     for (let x = minx; x <= maxx; x++) {
       if (items.find(o => o.x === x && o.y === y)) {
-        result += '#'
+        result += String.fromCharCode(charcode);
+        charcode++;
       } else {
         result += '.'
       }
@@ -122,16 +126,17 @@ export const debugItems = (items, round) => {
     result += "\n"
   }
 
-  console.log('### result round ', round, '###', "\n", result)
+  console.log('### result round ', round)
+  console.log(result)
 }
 
 export const solve = (items, rounds) => {
   return Array.from({ length: rounds }).reduce((acc, _, round) => {
     const withProposedPositions = doRoundFirstHalf(acc.items, acc.directions)
-    console.log('### solve withProposedPositions', withProposedPositions)
+    //  console.log('### solve withProposedPositions', withProposedPositions)
     const newItems = doRoundSecondHalf(withProposedPositions)
 
-    debugItems(newItems, round + 1)
+    //  debugItems(newItems, round + 1)
 
     return {
       items: newItems,
@@ -145,24 +150,23 @@ export const solve = (items, rounds) => {
 
 }
 
-export const part1 = input => {
-  const items = parseInput(input)
-
-
-  const result = solve(items, 10)
-
-
-  console.log('### result', result)
-
-  const [minx, miny, maxx, maxy] = result.items.reduce((acc, { x, y }) => {
+export const getBoundingBox = (items) => {
+  return items.reduce((acc, { x, y }) => {
     return [Math.min(acc[0], x), Math.min(acc[1], y), Math.max(acc[2], x), Math.max(acc[3], y)]
 
-  }, [0, 0, 0, 0])
+  }, [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY,])
+}
 
-  console.log('### minx, miny, maxx, maxy', minx, miny, maxx, maxy)
+export const part1 = input => {
+  const items = parseInput(input)
+  const result = solve(items, 10)
 
-  console.log('### area', (maxx - minx) * (maxy - miny))
-  console.log('### part1res', ((maxx - minx) * (maxy - miny)) - result.items.length)
+  //  console.log('### result', result)
+
+  const [minx, miny, maxx, maxy] = getBoundingBox(result.items)
+
+  const area = (maxx - minx + 1) * (maxy - miny + 1)
+  return area - result.items.length
 
 }
 
