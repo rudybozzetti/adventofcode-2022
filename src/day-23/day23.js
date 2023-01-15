@@ -170,6 +170,45 @@ export const part1 = input => {
 
 }
 
-export const part2 = input => {
+//
 
+export const solve2 = (initialItems) => {
+
+  const stack = [{
+    items: initialItems,
+    directions: ['N', 'S', 'W', 'E']
+  }]
+
+  let round = 0
+  while (stack.length > 0) {
+    const { items, directions } = stack.pop()
+    round++;
+    console.log('### round', round)
+
+    const withProposedPositions = doRoundFirstHalf(items, directions)
+    //
+    //  console.log('### solve withProposedPositions', withProposedPositions)
+
+    const noProposed = withProposedPositions.every(o => o.proposed === undefined)
+    if (noProposed) {
+      break
+    }
+
+    //
+    const newItems = doRoundSecondHalf(withProposedPositions)
+
+    stack.push(
+      { items: newItems, directions: [...directions.slice(1, 4), directions[0]] }
+    )
+
+  }
+
+  return round
+}
+
+export const part2 = input => {
+  const items = parseInput(input)
+  const result = solve2(items)
+
+  return result
 }

@@ -2,7 +2,7 @@ import {
   parseInput, Nfinder,
   Efinder,
   Sfinder,
-  Wfinder, nearFinder, part1
+  Wfinder, nearFinder, part1, part2
 } from './day23'
 
 const testInput = `....#..
@@ -123,5 +123,9 @@ describe('day23', () => {
 
   it('part1', () => {
     expect(part1(testInput)).toBe(110)
+  })
+
+  it('part2', () => {
+    expect(part2(testInput)).toBe(20)
   })
 })
