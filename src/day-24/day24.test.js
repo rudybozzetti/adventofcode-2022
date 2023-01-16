@@ -1,4 +1,5 @@
 
+import {parseInput} from './day24'
 
 const testInput=`#.######
 #>>.<^<#
@@ -6,9 +7,9 @@ const testInput=`#.######
 #>v.><>#
 #<^v^^>#
 ######.#`
-0123456
 
-const testMapModel = {
+
+const testValleyModel = {
   minx:0,
   miny:0,
   maxx: 7,
@@ -17,7 +18,7 @@ const testMapModel = {
   end: {x:6,y:5}
 }
 
-const testBlizzardModel = [
+const testBlizzardsModel = [
   {dir: '>', x: 1,y:1},
   {dir: '>', x: 2,y:1},
   {dir: '<', x: 4,y:1},
@@ -42,3 +43,12 @@ const testBlizzardModel = [
   {dir: '>', x: 6,y:4},
   
 ]
+
+describe('day24', () => {
+  it('parseInput', () => {
+    expect(parseInput(testInput)).toStrictEqual({
+      valley: testValleyModel,
+      blizzards: testBlizzardsModel
+    })
+  })
+})
