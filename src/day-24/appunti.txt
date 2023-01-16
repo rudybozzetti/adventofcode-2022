@@ -1,0 +1,11 @@
+This gave me solutions in 42ms for part1 and 160ms for part2.
+
+I also used my usual trick for managing 2D data in Go (and bash...), which lacks multidimensional arrays. For a 2D grid of width W and height H, I use a single array of size W*H, and convert a position p in this array to (x, y) coordinates by the simple rules:
+
+p = x + y*W
+
+x = p % W
+
+y = p / W
+
+This simplifies immensely working with data on a 2D map of a fixed size. For instance a direction can then just be a number that you add to a position to move in this direction: up is -W, down is +W, right is +1, left is -1.
