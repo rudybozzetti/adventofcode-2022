@@ -1,5 +1,19 @@
 
 import { parseInput, updateBlizzards, solve } from './day24'
+import {
+  testBlizzardsModelMinute1,
+  testBlizzardsModelMinute2,
+  testBlizzardsModelMinute3,
+  testBlizzardsModelMinute4,
+  testBlizzardsModelMinute5,
+  testBlizzardsModelMinute6,
+  testBlizzardsModelMinute7,
+  testBlizzardsModelMinute8,
+  testBlizzardsModelMinute9,
+  testBlizzardsModelMinute10,
+  testBlizzardsModelMinute11,
+  
+} from './day24.testdata'
 
 const testInput = `#.######
 #>>.<^<#
@@ -44,31 +58,6 @@ const testBlizzardsModel = [
 
 ]
 
-const testBlizzardsModelMinute1 = [
-  { dir: '>', x: 2, y: 1 },
-  { dir: '>', x: 3, y: 1 },
-  { dir: '<', x: 3, y: 1 },
-  { dir: '^', x: 5, y: 4 },
-  { dir: '<', x: 5, y: 1 },
-  //
-  { dir: '<', x: 1, y: 2 },
-  { dir: '<', x: 4, y: 2 },
-  { dir: '<', x: 5, y: 2 },
-  //
-  { dir: '>', x: 2, y: 3 },
-  { dir: 'v', x: 2, y: 4 },
-  { dir: '>', x: 5, y: 3 },
-  { dir: '<', x: 4, y: 3 },
-  { dir: '>', x: 1, y: 3 },
-  //
-  { dir: '<', x: 6, y: 4 },
-  { dir: '^', x: 2, y: 3 },
-  { dir: 'v', x: 3, y: 1 },
-  { dir: '^', x: 4, y: 3 },
-  { dir: '^', x: 5, y: 3 },
-  { dir: '>', x: 1, y: 4 },
-
-]
 
 describe('day24', () => {
   it('parseInput', () => {
@@ -83,6 +72,17 @@ describe('day24', () => {
       minx: 0, miny: 0, maxx: 7, maxy: 5
     }
     expect(updateBlizzards(bounds, testBlizzardsModel)).toStrictEqual(testBlizzardsModelMinute1)
+    expect(updateBlizzards(bounds, testBlizzardsModelMinute1)).toStrictEqual(testBlizzardsModelMinute2)
+    expect(updateBlizzards(bounds, testBlizzardsModelMinute2)).toStrictEqual(testBlizzardsModelMinute3)
+    expect(updateBlizzards(bounds, testBlizzardsModelMinute3)).toStrictEqual(testBlizzardsModelMinute4)
+    expect(updateBlizzards(bounds, testBlizzardsModelMinute4)).toStrictEqual(testBlizzardsModelMinute5)
+    expect(updateBlizzards(bounds, testBlizzardsModelMinute5)).toStrictEqual(testBlizzardsModelMinute6)
+    expect(updateBlizzards(bounds, testBlizzardsModelMinute6)).toStrictEqual(testBlizzardsModelMinute7)
+    expect(updateBlizzards(bounds, testBlizzardsModelMinute7)).toStrictEqual(testBlizzardsModelMinute8)
+    expect(updateBlizzards(bounds, testBlizzardsModelMinute8)).toStrictEqual(testBlizzardsModelMinute9)
+    expect(updateBlizzards(bounds, testBlizzardsModelMinute9)).toStrictEqual(testBlizzardsModelMinute10)
+    expect(updateBlizzards(bounds, testBlizzardsModelMinute10)).toStrictEqual(testBlizzardsModelMinute11)
+    expect(updateBlizzards(bounds, testBlizzardsModelMinute11)).toStrictEqual(testBlizzardsModel)
   })
 
   it('solve', () => {

@@ -101,6 +101,24 @@ const getVisitedKey = (x, y, blizzards) => {
   return JSON.stringify({ x, y, blizzards })
 }
 
+export const canGoRight = (x, y, blizzards, { minx, miny, maxx, maxy }) => {
+  return (y !== miny) && (y !== maxy) && (x > minx) && (x < (maxx - 1)) && !blizzards.some(b => b.x === x + 1 && b.y === y)
+}
+
+export const canGoLeft = (x, y, blizzards, { minx, miny, maxx, maxy }) => {
+  return (y !== miny) && (y !== maxy) && (x > (minx + 1)) && (x < maxx) && !blizzards.some(b => b.x === x - 1 && b.y === y)
+}
+
+export const canGoUp = (x, y, blizzards, { minx, miny, maxx, maxy }) => {
+  return (y > (miny + 1)) && !blizzards.some(b => b.x === x && b.y === y - 1)
+}
+
+export const canGoDown = (x, y, blizzards, { minx, miny, maxx, maxy }) => {
+  return (y < (maxy - 1)) && !blizzards.some(b => b.x === x && b.y === y + 1)
+}
+
+
+
 export const solve = ({ start, end, ...bounds }, initialBlizzards) => {
   const stack = [{
     x: start.x,
@@ -167,7 +185,7 @@ export const solve = ({ start, end, ...bounds }, initialBlizzards) => {
     })
 
     //  try '>'
-    if (y > bounds.miny && x < (bounds.maxx - 1) && !nextBlizzards.some(b => b.x === x + 1 && b.y === y)) {
+    if (canGoRight(x, y, nextBlizzards, bounds)) {
       console.log('### try >')
       stack.push({
         x: x + 1, y, blizzards: nextBlizzards, moves: moves + 1, steps: newSteps
@@ -175,7 +193,7 @@ export const solve = ({ start, end, ...bounds }, initialBlizzards) => {
     }
 
     //  try '<'
-    if (y > bounds.miny && x > (bounds.minx + 1) && !nextBlizzards.some(b => b.x === x - 1 && b.y === y)) {
+    if (canGoLeft(x, y, nextBlizzards, bounds)) {
       console.log('### try <')
       stack.push({
         x: x - 1, y, blizzards: nextBlizzards, moves: moves + 1, steps: newSteps
@@ -183,7 +201,7 @@ export const solve = ({ start, end, ...bounds }, initialBlizzards) => {
     }
 
     //  try '^'
-    if (y > (bounds.miny + 1) && !nextBlizzards.some(b => b.x === x && b.y === y - 1)) {
+    if (canGoUp(x, y, nextBlizzards, bounds)) {
       console.log('### try ^')
       stack.push({
         x, y: y - 1, blizzards: nextBlizzards, moves: moves + 1, steps: newSteps
@@ -191,7 +209,7 @@ export const solve = ({ start, end, ...bounds }, initialBlizzards) => {
     }
 
     //  try 'v'
-    if (y < (bounds.maxy - 1) && !nextBlizzards.some(b => b.x === x && b.y === y + 1)) {
+    if (canGoDown(x,y,nextBlizzards,bounds)) {
       console.log('### try v')
       stack.push({
         x, y: y + 1, blizzards: nextBlizzards, moves: moves + 1, steps: newSteps
