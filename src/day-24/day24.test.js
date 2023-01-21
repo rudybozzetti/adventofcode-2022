@@ -1,5 +1,5 @@
 
-import { parseInput, updateBlizzards, solve } from './day24'
+import { parseInput, updateBlizzards, solve, part1, part2 } from './day24'
 import {
   testBlizzardsModelMinute1,
   testBlizzardsModelMinute2,
@@ -12,7 +12,7 @@ import {
   testBlizzardsModelMinute9,
   testBlizzardsModelMinute10,
   testBlizzardsModelMinute11,
-  
+
 } from './day24.testdata'
 
 const testInput = `#.######
@@ -85,7 +85,24 @@ describe('day24', () => {
     expect(updateBlizzards(bounds, testBlizzardsModelMinute11)).toStrictEqual(testBlizzardsModel)
   })
 
-  it('solve', () => {
+  it.only('solve', () => {
     expect(solve(testValleyModel, testBlizzardsModel)).toBe(18)
+
+    /*
+    expect(solve({
+      ...testValleyModel,
+      start: { x: 6, y: 5 },
+      end: { x: 1, y: 0 }
+    }, testBlizzardsModel, 18, true)).toBe(23)
+    */
+
+  })
+
+  it('part1', () => {
+    expect(part1(testInput)).toBe(18)
+  })
+
+  it('part2', () => {
+    expect(part2(testInput)).toBe(54)
   })
 })

@@ -109,12 +109,12 @@ export const canGoLeft = (x, y, blizzards, { minx, miny, maxx, maxy }) => {
   return (y !== miny) && (y !== maxy) && (x > (minx + 1)) && (x < maxx) && !blizzards.some(b => b.x === x - 1 && b.y === y)
 }
 
-export const canGoUp = (x, y, blizzards, { minx, miny, maxx, maxy }) => {
-  return (y > (miny + 1)) && !blizzards.some(b => b.x === x && b.y === y - 1)
+export const canGoUp = (x, y, blizzards, { minx, miny, maxx, maxy }, start, end) => {
+  return !(start.x === x && start.y === y - 1) && ((end.x === x && end.y === y - 1) || (y > (miny + 1)) && !blizzards.some(b => b.x === x && b.y === y - 1))
 }
 
-export const canGoDown = (x, y, blizzards, { minx, miny, maxx, maxy }) => {
-  return (y < (maxy - 1)) && !blizzards.some(b => b.x === x && b.y === y + 1)
+export const canGoDown = (x, y, blizzards, { minx, miny, maxx, maxy }, start, end) => {
+  return !(start.x === x && start.y === y + 1) && ((end.x === x && end.y === y + 1) || (end.x === x && end.y === y) || (y < (maxy - 1)) && !blizzards.some(b => b.x === x && b.y === y + 1))
 }
 
 export const canWait = (x, y, blizzards) => {
@@ -150,11 +150,11 @@ export const debug = ({ x, y }, { minx, miny, maxx, maxy }, blizzards, message =
 }
 
 
-export const solve = ({ start, end, ...bounds }, initialBlizzards) => {
+export const solve = ({ start, end, ...bounds }, initialBlizzards, initialMoves = 0, reverse = false) => {
   const stack = [{
     x: start.x,
     y: start.y,
-    moves: 0,
+    moves: initialMoves,
     steps: []
   }]
 
@@ -187,7 +187,7 @@ export const solve = ({ start, end, ...bounds }, initialBlizzards) => {
 
     //
     if (moves > bestMoves) {
-      console.log('### moves > bestMoves', moves, '>', bestMoves, '>>> exit')
+      //  console.log('### moves > bestMoves', moves, '>', bestMoves, '>>> exit')
       continue
     }
 
@@ -217,15 +217,6 @@ export const solve = ({ start, end, ...bounds }, initialBlizzards) => {
       continue
     }
 
-    //  try next is exit
-    if (x === end.x && y + 1 === end.y) {
-      //  console.log('### found exit')
-      stack.push({
-        x, y: y + 1, moves: moves + 1, steps: newSteps
-      })
-      continue
-    }
-
     //  nop action
     //  console.log('### try nop')
     if (canWait(x, y, nextBlizzards)) {
@@ -234,9 +225,6 @@ export const solve = ({ start, end, ...bounds }, initialBlizzards) => {
         x, y, moves: moves + 1, steps: newSteps
       })
     }
-
-
-
 
     //  try '<'
     if (canGoLeft(x, y, nextBlizzards, bounds)) {
@@ -247,7 +235,7 @@ export const solve = ({ start, end, ...bounds }, initialBlizzards) => {
     }
 
     //  try '^'
-    if (canGoUp(x, y, nextBlizzards, bounds) && (x !== start.x && ((y - 1) !== start.y))) {
+    if (canGoUp(x, y, nextBlizzards, bounds, start, end)) {
       //  console.log('### try ^')
       stack.push({
         x, y: y - 1, moves: moves + 1, steps: newSteps
@@ -263,12 +251,14 @@ export const solve = ({ start, end, ...bounds }, initialBlizzards) => {
     }
 
     //  try 'v'
-    if (canGoDown(x, y, nextBlizzards, bounds)) {
+    if (canGoDown(x, y, nextBlizzards, bounds, start, end)) {
       //  console.log('### try v')
       stack.push({
         x, y: y + 1, moves: moves + 1, steps: newSteps
       })
     }
+
+
 
   }
 
@@ -283,6 +273,28 @@ export const part1 = input => {
   return result
 }
 
+
+
 export const part2 = input => {
   const { valley, blizzards } = parseInput(input)
+
+  /*
+  
+    const p1 = solve(valley, blizzards)
+    console.log('### p1', p1)
+  
+    const p2 = solve({
+      ...valley,
+      start: { ...valley.end },
+      end: { ...valley.start }
+    }, blizzards, p1)
+    console.log('### p2', p2)
+  
+    const p3 = solve(valley, blizzards, p2)
+    console.log('### p3', p3)
+  
+  
+  
+    return p1 + p2 + p3
+    */
 }
