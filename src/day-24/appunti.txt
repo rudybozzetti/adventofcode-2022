@@ -9,3 +9,8 @@ x = p % W
 y = p / W
 
 This simplifies immensely working with data on a 2D map of a fixed size. For instance a direction can then just be a number that you add to a position to move in this direction: up is -W, down is +W, right is +1, left is -1.
+
+
+
+p1: should be 251 (ho 258 ma dice too low... 374 is too high) 373!
+p2: should be 758

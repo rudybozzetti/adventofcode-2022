@@ -117,6 +117,10 @@ export const canGoDown = (x, y, blizzards, { minx, miny, maxx, maxy }) => {
   return (y < (maxy - 1)) && !blizzards.some(b => b.x === x && b.y === y + 1)
 }
 
+export const canWait = (x, y, blizzards) => {
+  return !blizzards.some(b => b.x === x && b.y === y)
+}
+
 
 export const debug = ({ x, y }, { minx, miny, maxx, maxy }, blizzards, message = '') => {
   let result = ''
@@ -150,7 +154,6 @@ export const solve = ({ start, end, ...bounds }, initialBlizzards) => {
   const stack = [{
     x: start.x,
     y: start.y,
-    blizzards: initialBlizzards,
     moves: 0,
     steps: []
   }]
@@ -161,12 +164,22 @@ export const solve = ({ start, end, ...bounds }, initialBlizzards) => {
 
   const bzcCacheSize = (bounds.maxx - bounds.minx - 1) * (bounds.maxy - bounds.miny - 1)
   const blizzardCache = Array.from({ length: bzcCacheSize })
+  for (let i = 0; i < bzcCacheSize; i++) {
+    blizzardCache[i] = i === 0 ? initialBlizzards : updateBlizzards(bounds, blizzardCache[i - 1])
+  }
 
   while (stack.length > 0) {
-    const { x, y, blizzards, moves, steps } = stack.pop()
+    const { x, y, moves, steps } = stack.pop()
     //  console.log('### stack pop x, y', x, y, '### moves', moves, '### steps', steps)
 
-    //  debug({ x, y }, bounds, blizzards, `round ${moves}`)
+    //  debug({ x, y }, bounds, blizzardCache[moves % bzcCacheSize], `minute ${moves}`)
+
+    const bz = blizzardCache[moves % bzcCacheSize]
+    const ahiahiahi = bz.some(b => b.x === x && b.y === y)
+    if (ahiahiahi) {
+      console.log('### fuck! at', moves, "x,y", x, y, 'bz', bz, 'steps', steps)
+
+    }
 
     if (moves > 100000) {
       break
@@ -181,10 +194,10 @@ export const solve = ({ start, end, ...bounds }, initialBlizzards) => {
     const newSteps = [...steps, { x, y }]
 
     //
-    const nextBlizzards = updateBlizzards(bounds, blizzards)
+    const nextBlizzards = blizzardCache[(moves + 1) % bzcCacheSize]
     //  console.log('### nextBlizzards', nextBlizzards)
     //
-    const visitedKey = getVisitedKey(x, y, nextBlizzards)
+    const visitedKey = getVisitedKey(x, y, (moves + 1) % bzcCacheSize)
     if (visited.has(visitedKey)) {
       //  console.log('### already visited', visitedKey)
       continue
@@ -208,38 +221,44 @@ export const solve = ({ start, end, ...bounds }, initialBlizzards) => {
     if (x === end.x && y + 1 === end.y) {
       //  console.log('### found exit')
       stack.push({
-        x, y: y + 1, blizzards: nextBlizzards, moves: moves + 1, steps: newSteps
+        x, y: y + 1, moves: moves + 1, steps: newSteps
       })
       continue
     }
 
     //  nop action
     //  console.log('### try nop')
-    stack.push({
-      x, y, blizzards: nextBlizzards, moves: moves + 1, steps: newSteps
-    })
-
-    //  try '>'
-    if (canGoRight(x, y, nextBlizzards, bounds)) {
-      //  console.log('### try >')
+    if (canWait(x, y, nextBlizzards)) {
+      //  console.log('### try nop')
       stack.push({
-        x: x + 1, y, blizzards: nextBlizzards, moves: moves + 1, steps: newSteps
+        x, y, moves: moves + 1, steps: newSteps
       })
     }
+
+
+
 
     //  try '<'
     if (canGoLeft(x, y, nextBlizzards, bounds)) {
       //  console.log('### try <')
       stack.push({
-        x: x - 1, y, blizzards: nextBlizzards, moves: moves + 1, steps: newSteps
+        x: x - 1, y, moves: moves + 1, steps: newSteps
       })
     }
 
     //  try '^'
-    if (canGoUp(x, y, nextBlizzards, bounds) && (x !== start.x && y - 1 !== start.y)) {
+    if (canGoUp(x, y, nextBlizzards, bounds) && (x !== start.x && ((y - 1) !== start.y))) {
       //  console.log('### try ^')
       stack.push({
-        x, y: y - 1, blizzards: nextBlizzards, moves: moves + 1, steps: newSteps
+        x, y: y - 1, moves: moves + 1, steps: newSteps
+      })
+    }
+
+    //  try '>'
+    if (canGoRight(x, y, nextBlizzards, bounds)) {
+      //  console.log('### try >')
+      stack.push({
+        x: x + 1, y, moves: moves + 1, steps: newSteps
       })
     }
 
@@ -247,13 +266,13 @@ export const solve = ({ start, end, ...bounds }, initialBlizzards) => {
     if (canGoDown(x, y, nextBlizzards, bounds)) {
       //  console.log('### try v')
       stack.push({
-        x, y: y + 1, blizzards: nextBlizzards, moves: moves + 1, steps: newSteps
+        x, y: y + 1, moves: moves + 1, steps: newSteps
       })
     }
 
   }
 
-  return bestMoves + 1
+  return bestMoves
 }
 
 export const part1 = input => {
