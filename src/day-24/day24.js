@@ -217,46 +217,99 @@ export const solve = ({ start, end, ...bounds }, initialBlizzards, initialMoves 
       continue
     }
 
-    //  nop action
-    //  console.log('### try nop')
-    if (canWait(x, y, nextBlizzards)) {
+
+
+
+    if (reverse) {
+      //  nop action
       //  console.log('### try nop')
-      stack.push({
-        x, y, moves: moves + 1, steps: newSteps
-      })
+      if (canWait(x, y, nextBlizzards)) {
+        //  console.log('### try nop')
+        stack.push({
+          x, y, moves: moves + 1, steps: newSteps
+        })
+      }
+
+      //  try '>'
+      if (canGoRight(x, y, nextBlizzards, bounds)) {
+        //  console.log('### try >')
+        stack.push({
+          x: x + 1, y, moves: moves + 1, steps: newSteps
+        })
+      }
+
+      //  try 'v'
+      if (canGoDown(x, y, nextBlizzards, bounds, start, end)) {
+        //  console.log('### try v')
+        stack.push({
+          x, y: y + 1, moves: moves + 1, steps: newSteps
+        })
+      }
+
+      //  try '<'
+      if (canGoLeft(x, y, nextBlizzards, bounds)) {
+        //  console.log('### try <')
+        stack.push({
+          x: x - 1, y, moves: moves + 1, steps: newSteps
+        })
+      }
+
+      //  try '^'
+      if (canGoUp(x, y, nextBlizzards, bounds, start, end)) {
+        //  console.log('### try ^')
+        stack.push({
+          x, y: y - 1, moves: moves + 1, steps: newSteps
+        })
+      }
+
+
+    } else {
+      //  nop action
+      //  console.log('### try nop')
+      if (canWait(x, y, nextBlizzards)) {
+        //  console.log('### try nop')
+        stack.push({
+          x, y, moves: moves + 1, steps: newSteps
+        })
+      }
+      //  try '<'
+      if (canGoLeft(x, y, nextBlizzards, bounds)) {
+        //  console.log('### try <')
+        stack.push({
+          x: x - 1, y, moves: moves + 1, steps: newSteps
+        })
+      }
+
+      //  try '^'
+      if (canGoUp(x, y, nextBlizzards, bounds, start, end)) {
+        //  console.log('### try ^')
+        stack.push({
+          x, y: y - 1, moves: moves + 1, steps: newSteps
+        })
+      }
+
+      //  try '>'
+      if (canGoRight(x, y, nextBlizzards, bounds)) {
+        //  console.log('### try >')
+        stack.push({
+          x: x + 1, y, moves: moves + 1, steps: newSteps
+        })
+      }
+
+      //  try 'v'
+      if (canGoDown(x, y, nextBlizzards, bounds, start, end)) {
+        //  console.log('### try v')
+        stack.push({
+          x, y: y + 1, moves: moves + 1, steps: newSteps
+        })
+      }
     }
 
-    //  try '<'
-    if (canGoLeft(x, y, nextBlizzards, bounds)) {
-      //  console.log('### try <')
-      stack.push({
-        x: x - 1, y, moves: moves + 1, steps: newSteps
-      })
-    }
 
-    //  try '^'
-    if (canGoUp(x, y, nextBlizzards, bounds, start, end)) {
-      //  console.log('### try ^')
-      stack.push({
-        x, y: y - 1, moves: moves + 1, steps: newSteps
-      })
-    }
 
-    //  try '>'
-    if (canGoRight(x, y, nextBlizzards, bounds)) {
-      //  console.log('### try >')
-      stack.push({
-        x: x + 1, y, moves: moves + 1, steps: newSteps
-      })
-    }
 
-    //  try 'v'
-    if (canGoDown(x, y, nextBlizzards, bounds, start, end)) {
-      //  console.log('### try v')
-      stack.push({
-        x, y: y + 1, moves: moves + 1, steps: newSteps
-      })
-    }
+
+
 
 
 
@@ -278,23 +331,22 @@ export const part1 = input => {
 export const part2 = input => {
   const { valley, blizzards } = parseInput(input)
 
-  /*
-  
-    const p1 = solve(valley, blizzards)
-    console.log('### p1', p1)
-  
-    const p2 = solve({
-      ...valley,
-      start: { ...valley.end },
-      end: { ...valley.start }
-    }, blizzards, p1)
-    console.log('### p2', p2)
-  
-    const p3 = solve(valley, blizzards, p2)
-    console.log('### p3', p3)
-  
-  
-  
-    return p1 + p2 + p3
-    */
+
+
+  const t1 = solve(valley, blizzards)
+  console.log('### t1', t1)
+
+  const t2 = solve({
+    ...valley,
+    start: { ...valley.end },
+    end: { ...valley.start }
+  }, blizzards, t1, true)
+  console.log('### t2', t2)
+
+  const t3 = solve(valley, blizzards, t2)
+  console.log('### t3', t3)
+
+
+
+  return t3
 }

@@ -85,16 +85,18 @@ describe('day24', () => {
     expect(updateBlizzards(bounds, testBlizzardsModelMinute11)).toStrictEqual(testBlizzardsModel)
   })
 
-  it.only('solve', () => {
+  it('solve', () => {
     expect(solve(testValleyModel, testBlizzardsModel)).toBe(18)
 
-    /*
+
     expect(solve({
       ...testValleyModel,
       start: { x: 6, y: 5 },
       end: { x: 1, y: 0 }
-    }, testBlizzardsModel, 18, true)).toBe(23)
-    */
+    }, testBlizzardsModel, 18, true)).toBe(18 + 23)
+
+    expect(solve(testValleyModel, testBlizzardsModel, 18 + 23)).toBe(18 + 23 + 13)
+
 
   })
 
