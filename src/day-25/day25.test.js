@@ -1,5 +1,5 @@
 
-import { fromSNAFU, toSNAFU, parseInput } from './day25'
+import { fromSNAFU, toSNAFU, parseInput, part1, part2 } from './day25'
 
 const testInput = `1=-0-2
 12111
@@ -59,7 +59,11 @@ describe('day25', () => {
     expect(parseInput(testInput)).toStrictEqual(testModel)
   })
 
-  it.only('toSNAFU', () => {
+  it('toSNAFU', () => {
     expect(toSNAFU(353)).toBe('1=-1=')
+  })
+
+  it('part1', ()=> {
+    expect(part1(testInput)).toBe('2=-1=0')
   })
 })

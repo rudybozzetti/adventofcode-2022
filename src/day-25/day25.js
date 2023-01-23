@@ -20,29 +20,50 @@ export const fromSNAFU = snafu => {
   }, 0)
 }
 
-export const toSNAFU = (n) => {
-  /*
-const count = Math.ceil(Math.pow(n, 1 / 5))
-//
-const x = n / Math.pow(count, 5)
-console.log('### x', x)
+export const log = (n, base) => Math.log(n) / Math.log(base)
 
-if (x > 0) {
-  const r = n - Math.pow(count - 1, 5)
-  console.log('### rr', r)
+export const toSNAFU = (n) => {
+  const stack = [n]
+  let result = ''
+  let result2 = ''
+
+  while(stack.length) {
+    const x = stack.pop()
+    //
+    const div = Math.floor( x / 5)
+    const mod = x % 5
+
+    if(mod === 4) {
+      //  5 - 1
+      result = '-' + result
+      stack.push(div + 1)
+    } else if (mod === 3) {
+      //  5 - 2
+      result = '=' +result
+      stack.push(div + 1)
+    } else if (div > 0) {
+      result = mod + result
+      stack.push(div)
+    } else {
+      result = mod + result
+    }
+
+    
+
+  }
+
+  return result
 }
 
+export const part1 = input => {
+  const model = parseInput(input)
+  const sum = model.reduce((acc, n) => acc +n, 0)
 
+  const result = toSNAFU(sum)
 
+  return result
+}
 
-console.log('### count', count)
-const base = Math.pow(5, count)
-console.log('### base', base)
-console.log('### next', Math.pow(5, count - 1))
-
-console.log('### -', n - Math.pow(5, count - 1))
-console.log('### =', n - 2 * Math.pow(5, count - 1))
-
-*/
-
+export const part2 = input => {
+  
 }
